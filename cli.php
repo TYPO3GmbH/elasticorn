@@ -5,7 +5,7 @@ require_once ("vendor/autoload.php");
 
 define('APPLICATION_PATH', __DIR__ . '/');
 
-$elasticaTest = new \T3G\Elasticorn\IndexUtility();
-$elasticaTest->test();
-$elasticaTest->applyMapping();
-$elasticaTest->addDocument();
+$application = new \Symfony\Component\Console\Application();
+$application->add(new \T3G\Elasticorn\Commands\InitCommand());
+$application->add(new \T3G\Elasticorn\Commands\RemapCommand());
+$application->run();
