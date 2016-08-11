@@ -91,19 +91,19 @@ class IndexUtility
             );
 
 
-        $differ = new Differ();
+        $differ = new Differ("--- On Server\n+++ In Configuration\n", true);
         if ($mapping === $documentTypeConfigurations) {
             $this->logger->info('no difference between configurations.');
         } else {
             foreach ($documentTypeConfigurations as $documentType => $configuration) {
                 if (isset($mapping[$documentType])) {
-                    if ($mapping[$documentType] === $configuration) {
+                    $documentTypeMapping = $mapping[$documentType]['properties'];
+                    $configuration = $configuration['properties'];
+                    ksort($documentTypeMapping);
+                    ksort($configuration);
+                    if ($documentTypeMapping === $configuration) {
                         $this->logger->info('no difference between configurations of document type "' . $documentType . '"');
                     } else {
-                        $documentTypeMapping = $mapping[$documentType]['properties'];
-                        $configuration = $configuration['properties'];
-                        ksort($documentTypeMapping);
-                        ksort($configuration);
                         $diff = "Document Type \"$documentType\": \n" .
                                 $differ->diff(
                                     var_export($documentTypeMapping, true),

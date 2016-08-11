@@ -1,2 +1,16 @@
-first_name:
-    type: string
+id:
+  type: integer
+username:
+  type: string
+  index: not_analyzed
+  store: true
+fullname:
+  type: string
+  index: not_analyzed
+  store: true
+email:
+  type: integer
+  index: not_analyzed
+  store: true
+avatar:
+  type: string
