@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace T3G\Elasticorn;
+namespace T3G\Elasticorn\Utility;
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -23,12 +23,10 @@ class ConfigurationParser
 
     /**
      * ConfigurationParser constructor.
-     *
-     * @param string $configFolder
      */
-    public function __construct(string $configFolder)
+    public function __construct()
     {
-        $this->configFolder = $configFolder;
+        $this->configFolder = $_ENV['configurationPath'];
     }
 
     /**
@@ -123,9 +121,13 @@ class ConfigurationParser
     /**
      * @param string $filePath
      * @return array
+     * @throws \Exception
      */
     private function getConfig(string $filePath) : array
     {
+        if (!file_exists($filePath)) {
+            throw new \Exception('No configuration found at ' . $filePath);
+        }
         $configFileContent = file_get_contents($filePath);
         return Yaml::parse($configFileContent);
     }

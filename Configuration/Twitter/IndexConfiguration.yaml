@@ -1,4 +1,0 @@
-name: twitter
-configuration:
-    number_of_shards: 4
-    number_of_replicas: 1

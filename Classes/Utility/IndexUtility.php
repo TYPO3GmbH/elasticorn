@@ -1,10 +1,11 @@
 <?php
-namespace T3G\Elasticorn;
+namespace T3G\Elasticorn\Utility;
 
 use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
 use Elastica\Type\Mapping;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class IndexUtility
@@ -19,19 +20,26 @@ class IndexUtility
     protected $client;
 
     /**
-     * @var \T3G\Elasticorn\ConfigurationParser
+     * @var \T3G\Elasticorn\Utility\ConfigurationParser
      */
     private $configurationParser;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
+
+    /**
      * IndexUtility constructor.
      *
-     * @param \T3G\Elasticorn\ConfigurationParser|null $configurationParser
+     * @param \Elastica\Client $client
+     * @param \T3G\Elasticorn\Utility\ConfigurationParser $configurationParser
      */
-    public function __construct(ConfigurationParser $configurationParser = null)
+    public function __construct(Client $client, ConfigurationParser $configurationParser, LoggerInterface $logger)
     {
-        $this->client = new Client();
-        $this->configurationParser = $configurationParser ?: new ConfigurationParser();
+        $this->client = $client;
+        $this->configurationParser = $configurationParser;
+        $this->logger = $logger;
     }
 
     /**
@@ -83,6 +91,7 @@ class IndexUtility
      */
     public function remap(string $indexName)
     {
+        $this->logger->info('Remapping ' . $indexName);
         $indexA = $this->client->getIndex($indexName . '_a');
         $indexB = $this->client->getIndex($indexName . '_b');
 
@@ -97,6 +106,7 @@ class IndexUtility
         }
 
         $this->recreateIndex($indexName, $inactiveIndex);
+        $this->logger->debug('Reindexing data with new mapping.');
         CrossIndex::reindex($activeIndex, $inactiveIndex);
         $this->switchAlias($indexName, $activeIndex, $inactiveIndex);
 
@@ -110,6 +120,7 @@ class IndexUtility
     private function createWithMapping(string $indexName, Index $index, $indexConfiguration)
     {
         $index->create($indexConfiguration);
+        $this->logger->debug('Creating index ' . $indexName);
         $this->applyMapping($indexName, $index);
     }
 
@@ -120,6 +131,7 @@ class IndexUtility
      */
     private function switchAlias(string $indexName, Index $activeIndex, Index $inactiveIndex)
     {
+        $this->logger->debug('Switching alias from ' . $activeIndex->getName() . ' to ' . $inactiveIndex->getName());
         $activeIndex->removeAlias($indexName);
         $inactiveIndex->addAlias($indexName);
     }
@@ -131,12 +143,13 @@ class IndexUtility
      */
     private function createIndex(string $indexName, array $configuration)
     {
+        $this->logger->info('Creating index ' . $indexName);
         $index = $this->client->getIndex($indexName);
         if (!$index->exists()) {
             $this->createIndexWithSuffix($indexName, '_a', true, $configuration);
             $this->createIndexWithSuffix($indexName, '_b', false, $configuration);
         } else {
-            throw new \Exception('Index already exists.');
+            throw new \Exception('Index ' . $indexName . ' already exists.');
         }
     }
 
@@ -163,8 +176,9 @@ class IndexUtility
      */
     private function recreateIndex(string $indexName, Index $index)
     {
-        $index->delete();
         $indexConfiguration = $this->configurationParser->getIndexConfiguration($indexName);
+        $this->logger->debug('Deleting index ' . $indexName);
+        $index->delete();
         $this->createWithMapping($indexName, $index, $indexConfiguration);
     }
 
@@ -175,12 +189,14 @@ class IndexUtility
     private function applyMapping(string $indexName, Index $index)
     {
         $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName);
+        $this->logger->debug('Loading mapping for ' . $indexName);
         foreach ($documentTypeConfigurations as $documentType => $configuration) {
             $type = $index->getType($documentType);
             $mapping = new Mapping();
             $mapping->setType($type);
             $mapping->setProperties($configuration);
             $mapping->send();
+            $this->logger->debug('Applying mapping for ' . $documentType);
         }
 
     }

@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit;
 
-use T3G\Elasticorn\ConfigurationParser;
+use T3G\Elasticorn\Utility\ConfigurationParser;
 
 class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,7 +14,8 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->configurationParser = new ConfigurationParser(realpath(__DIR__ . '/../Fixtures/Configuration') . '/');
+        $_ENV['configurationPath'] = realpath(__DIR__ . '/../../Fixtures/Configuration') . '/';
+        $this->configurationParser = new ConfigurationParser();
     }
 
     public function testGetIndexConfigurationFetchesConfigBasedOnIndexName()

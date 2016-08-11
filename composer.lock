@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1ba48ddc337f7a7849cf51e35ce81b9c",
-    "content-hash": "7c338cbaee9d9cb78af979f76b6f28b1",
+    "hash": "9d2381c1513ecb1e2d7968817d5528ef",
+    "content-hash": "44c5361bd96ef30b2e0787d23ee5aaa8",
     "packages": [
         {
             "name": "fzaninotto/faker",
@@ -165,12 +165,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "8398292e9c5bacfe4f48208aabaa80b3e67a65a9"
+                "reference": "f82f4744a58cf6846decbdbe29d3d8a1e6bf5d6a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/8398292e9c5bacfe4f48208aabaa80b3e67a65a9",
-                "reference": "8398292e9c5bacfe4f48208aabaa80b3e67a65a9",
+                "url": "https://api.github.com/repos/symfony/console/zipball/f82f4744a58cf6846decbdbe29d3d8a1e6bf5d6a",
+                "reference": "f82f4744a58cf6846decbdbe29d3d8a1e6bf5d6a",
                 "shasum": ""
             },
             "require": {
@@ -218,6 +218,69 @@
                 }
             ],
             "description": "Symfony Console Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-08-10 07:06:11"
+        },
+        {
+            "name": "symfony/dependency-injection",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/dependency-injection.git",
+                "reference": "d53a91bb53b8b70449e8c9ac3ad5f8db7e5ff02b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/dependency-injection/zipball/d53a91bb53b8b70449e8c9ac3ad5f8db7e5ff02b",
+                "reference": "d53a91bb53b8b70449e8c9ac3ad5f8db7e5ff02b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9"
+            },
+            "conflict": {
+                "symfony/yaml": "<3.2"
+            },
+            "require-dev": {
+                "symfony/config": "~2.8|~3.0",
+                "symfony/expression-language": "~2.8|~3.0",
+                "symfony/yaml": "~3.2"
+            },
+            "suggest": {
+                "symfony/config": "",
+                "symfony/expression-language": "For using expressions in service container configuration",
+                "symfony/proxy-manager-bridge": "Generate service proxies to lazy load them",
+                "symfony/yaml": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\DependencyInjection\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony DependencyInjection Component",
             "homepage": "https://symfony.com",
             "time": "2016-07-30 07:26:43"
         },
@@ -286,12 +349,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "9255a2ecb9e702ca5d1f9c3df7f9506d57910a9c"
+                "reference": "80944546b4014ce240dbeafabc2a3aec9e4794e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/9255a2ecb9e702ca5d1f9c3df7f9506d57910a9c",
-                "reference": "9255a2ecb9e702ca5d1f9c3df7f9506d57910a9c",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/80944546b4014ce240dbeafabc2a3aec9e4794e1",
+                "reference": "80944546b4014ce240dbeafabc2a3aec9e4794e1",
                 "shasum": ""
             },
             "require": {
@@ -333,7 +396,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-08-07 15:19:41"
+            "time": "2016-08-09 13:44:53"
         }
     ],
     "packages-dev": [
@@ -1541,12 +1604,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "3a8e045064f294992a13966b6c892fb9d64853a3"
+                "reference": "6853c68727010ed251036a9813e0d48675cd00a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/3a8e045064f294992a13966b6c892fb9d64853a3",
-                "reference": "3a8e045064f294992a13966b6c892fb9d64853a3",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/6853c68727010ed251036a9813e0d48675cd00a0",
+                "reference": "6853c68727010ed251036a9813e0d48675cd00a0",
                 "shasum": ""
             },
             "require": {
@@ -1559,7 +1622,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1-dev"
+                    "dev-master": "1.2-dev"
                 }
             },
             "autoload": {
@@ -1583,7 +1646,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-03-04 13:27:44"
+            "time": "2016-08-10 13:38:24"
         }
     ],
     "aliases": [],
