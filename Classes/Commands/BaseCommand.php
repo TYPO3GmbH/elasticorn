@@ -31,7 +31,6 @@ class BaseCommand extends Command
         if ($input->hasOption('config-path') && !empty($input->getOption('config-path'))) {
             $_ENV['configurationPath'] = $input->getOption('config-path');
         }
-        $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
         $this->indexUtility = $container->get('indexUtility');
     }
 
@@ -43,6 +42,7 @@ class BaseCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->askForConfigDir($input, $output);
+        $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
     }
 
     private function askForConfigDir(InputInterface $input, OutputInterface $output)

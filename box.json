@@ -4,7 +4,8 @@
     "Classes"
   ],
   "files": [
-    "cli.php"
+    "cli.php",
+    "bootstrap.php"
   ],
   "finder": [
     {

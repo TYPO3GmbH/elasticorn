@@ -90,12 +90,25 @@ class IndexUtility
                 $this->configurationParser->getDocumentTypeConfigurations($indexName)
             );
 
+
+        $differ = new Differ();
         if ($mapping === $documentTypeConfigurations) {
             $this->logger->info('no difference between configurations.');
         } else {
-            $differ = new Differ();
-            $diff = "\n" . $differ->diff(var_export($mapping, true), var_export($documentTypeConfigurations, true));
-            $this->logger->info($diff);
+            foreach ($documentTypeConfigurations as $documentType => $configuration) {
+                if (isset($mapping[$documentType])) {
+                    if ($mapping[$documentType] === $configuration) {
+                        $this->logger->info('no difference between configurations of document type ' . $documentType);
+                    } else {
+                        $diff = "Document Type \"$documentType\": \n" .
+                                $differ->diff(
+                                    var_export($mapping[$documentType], true),
+                                    var_export($configuration, true)
+                                );
+                        $this->logger->info($diff);
+                    }
+                }
+            }
         }
     }
 
@@ -103,7 +116,7 @@ class IndexUtility
     {
         $index = $this->client->getIndex($indexName);
         $mapping = $index->getMapping();
-        $this->logger->info('Current mapping:' . "\n" . var_export($mapping, true));
+        $this->logger->info('Current mapping:' . "\n" . print_r($mapping, true));
     }
 
 

@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit;
 
+use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 
 class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
@@ -15,7 +16,8 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $_ENV['configurationPath'] = realpath(__DIR__ . '/../../Fixtures/Configuration') . '/';
-        $this->configurationParser = new ConfigurationParser();
+        $loggerProphecy = $this->prophesize(LoggerInterface::class);
+        $this->configurationParser = new ConfigurationParser($loggerProphecy->reveal());
     }
 
     public function testGetIndexConfigurationFetchesConfigBasedOnIndexName()

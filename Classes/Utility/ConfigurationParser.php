@@ -142,7 +142,7 @@ class ConfigurationParser
      */
     private function getIndexDirectory(string $indexName) : string
     {
-        return $this->configFolder . ucfirst($indexName);
+        return $this->configFolder . $indexName;
     }
 
     /**
