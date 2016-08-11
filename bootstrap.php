@@ -24,4 +24,32 @@ $application->add(new InitCommand());
 $application->add(new RemapCommand());
 $application->add(new CompareCommand());
 $application->add(new ShowCommand());
+$application->setName(
+<<<ASCIIART
+                    Elasticorn!
+                             \
+                              \
+                               \\
+                                \\
+                                 >\/7
+                             _.-(6'  \
+                            (=___._/` \
+                                 )  \ |
+                                /   / |
+                               /    > /
+                              j    < _\
+                          _.-' :      ``.
+                          \ r=._\        `.
+                         <`\\_  \         .`-.
+                          \ r-7  `-. ._  ' .  `\
+                           \`,      `-.`7  7)   )
+                            \/         \|  \'  / `-._
+                                       ||    .'
+                                        \\  (
+                                         >\  >
+                                     ,.-' >.'
+                                    <.'_.''
+                                      <'
+ASCIIART
+);
 $application->run();
