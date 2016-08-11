@@ -28,5 +28,8 @@
   },
   "bin": [
     "cli.php"
-  ]
+  ],
+  "config": {
+    "bin-dir": "bin"
+  }
 }
