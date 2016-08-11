@@ -17,6 +17,8 @@ class InitCommand extends BaseCommand
 {
     /**
      * Configure the init command
+     *
+     * @return void
      */
     protected function configure()
     {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace T3G\Elasticorn\Utility;
 
 use Elastica\Client;
@@ -34,6 +35,7 @@ class IndexUtility
      *
      * @param \Elastica\Client $client
      * @param \T3G\Elasticorn\Utility\ConfigurationParser $configurationParser
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(Client $client, ConfigurationParser $configurationParser, LoggerInterface $logger)
     {
@@ -45,6 +47,8 @@ class IndexUtility
     /**
      * Add all indices found in configuration directory
      * Creates indices with suffixes _a and _b and adds an alias as indexName
+     *
+     * @throws \Exception
      */
     public function initIndices()
     {
@@ -87,7 +91,7 @@ class IndexUtility
      * After successfully importing data the alias gets set to the new index
      *
      * @param string $indexName
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public function remap(string $indexName)
     {
@@ -102,7 +106,7 @@ class IndexUtility
             $activeIndex = $indexB;
             $inactiveIndex = $indexA;
         } else {
-            throw new \Exception('no active index with name ' . $indexName . ' found.');
+            throw new \InvalidArgumentException('no active index with name ' . $indexName . ' found.');
         }
 
         $this->recreateIndex($indexName, $inactiveIndex);
@@ -139,7 +143,7 @@ class IndexUtility
     /**
      * @param string $indexName
      * @param array $configuration
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     private function createIndex(string $indexName, array $configuration)
     {
@@ -149,7 +153,7 @@ class IndexUtility
             $this->createIndexWithSuffix($indexName, '_a', true, $configuration);
             $this->createIndexWithSuffix($indexName, '_b', false, $configuration);
         } else {
-            throw new \Exception('Index ' . $indexName . ' already exists.');
+            throw new \InvalidArgumentException('Index ' . $indexName . ' already exists.');
         }
     }
 

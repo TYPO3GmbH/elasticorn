@@ -30,6 +30,8 @@ class ConfigurationParser
     }
 
     /**
+     * Get configurations for all indices
+     *
      * @return array
      */
     public function getIndexConfigurations() : array
@@ -121,12 +123,12 @@ class ConfigurationParser
     /**
      * @param string $filePath
      * @return array
-     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     private function getConfig(string $filePath) : array
     {
         if (!file_exists($filePath)) {
-            throw new \Exception('No configuration found at ' . $filePath);
+            throw new \InvalidArgumentException('No configuration found at ' . $filePath);
         }
         $configFileContent = file_get_contents($filePath);
         return Yaml::parse($configFileContent);
