@@ -1,0 +1,24 @@
+{
+  "chmod": "0755",
+  "directories": [
+    "Classes"
+  ],
+  "files": [
+    "cli.php",
+    "bootstrap.php"
+  ],
+  "finder": [
+    {
+      "name": "*.php",
+      "exclude": [
+        "Tests",
+        "Build"
+      ],
+      "in": "vendor"
+    }
+  ],
+  "git-version": "package_version",
+  "main": "cli.php",
+  "output": "elasticorn.phar",
+  "stub": true
+}

@@ -8,3 +8,5 @@ crashlytics-build.properties
 composer.phar
 /vendor/
 
+/.env
+/bin/

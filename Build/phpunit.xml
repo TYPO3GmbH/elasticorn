@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+		backupGlobals="true"
+		colors="true"
+>
+	<testsuites>
+		<testsuite name="Elasticorn Test Suite">
+			<directory>../Tests/Unit/</directory>
+		</testsuite>
+	</testsuites>
+	<filter>
+		<whitelist processUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">../Classes/</directory>
+		</whitelist>
+	</filter>
+</phpunit>
