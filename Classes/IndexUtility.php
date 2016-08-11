@@ -17,6 +17,7 @@ class IndexUtility
      * @var \Elastica\Client
      */
     protected $client;
+
     /**
      * @var \T3G\Elasticorn\ConfigurationParser
      */
@@ -34,7 +35,8 @@ class IndexUtility
     }
 
     /**
-     *
+     * Add all indices found in configuration directory
+     * Creates indices with suffixes _a and _b and adds an alias as indexName
      */
     public function initIndices()
     {
@@ -45,7 +47,9 @@ class IndexUtility
     }
 
     /**
+     * Re-apply mappings to all indices found in configuration directory
      *
+     * @see remap($indexName)
      */
     public function remapAll()
     {
@@ -69,6 +73,11 @@ class IndexUtility
 
 
     /**
+     * Remap an index
+     *
+     * Drops and recreates the current inactive index, applies mappings and imports data from active index
+     * After successfully importing data the alias gets set to the new index
+     *
      * @param string $indexName
      * @throws \Exception
      */
@@ -91,6 +100,17 @@ class IndexUtility
         CrossIndex::reindex($activeIndex, $inactiveIndex);
         $this->switchAlias($indexName, $activeIndex, $inactiveIndex);
 
+    }
+
+    /**
+     * @param string $indexName
+     * @param \Elastica\Index $index
+     * @param $indexConfiguration
+     */
+    private function createWithMapping(string $indexName, Index $index, $indexConfiguration)
+    {
+        $index->create($indexConfiguration);
+        $this->applyMapping($indexName, $index);
     }
 
     /**
@@ -130,8 +150,7 @@ class IndexUtility
     {
         $index = $this->client->getIndex($indexName . $suffix);
 
-        $index->create($configuration);
-        $this->applyMapping($indexName, $index);
+        $this->createWithMapping($indexName, $index, $configuration);
 
         if (true === $alias) {
             $index->addAlias($indexName);
@@ -146,8 +165,7 @@ class IndexUtility
     {
         $index->delete();
         $indexConfiguration = $this->configurationParser->getIndexConfiguration($indexName);
-        $index->create($indexConfiguration);
-        $this->applyMapping($indexName, $index);
+        $this->createWithMapping($indexName, $index, $indexConfiguration);
     }
 
     /**

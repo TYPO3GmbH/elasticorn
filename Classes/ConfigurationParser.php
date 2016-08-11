@@ -11,6 +11,9 @@ use Symfony\Component\Yaml\Yaml;
  */
 class ConfigurationParser
 {
+    /**
+     * Name of index configuration file
+     */
     const INDEX_CONF_FILENAME = 'IndexConfiguration.yaml';
 
     /**
@@ -18,15 +21,19 @@ class ConfigurationParser
      */
     private $configFolder;
 
-    public function __construct(string $configFolder = '')
+    /**
+     * ConfigurationParser constructor.
+     *
+     * @param string $configFolder
+     */
+    public function __construct(string $configFolder)
     {
-        if ($configFolder === '') {
-            $this->configFolder = APPLICATION_PATH . 'Configuration/';
-        } else {
-            $this->configFolder = $configFolder;
-        }
+        $this->configFolder = $configFolder;
     }
 
+    /**
+     * @return array
+     */
     public function getIndexConfigurations() : array
     {
         $indices = [];

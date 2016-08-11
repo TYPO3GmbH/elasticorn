@@ -14,7 +14,7 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->configurationParser = new ConfigurationParser();
+        $this->configurationParser = new ConfigurationParser(realpath(__DIR__ . '/../Fixtures/Configuration') . '/');
     }
 
     public function testGetIndexConfigurationFetchesConfigBasedOnIndexName()

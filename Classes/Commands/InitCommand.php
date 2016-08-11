@@ -10,8 +10,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 use T3G\Elasticorn\ConfigurationParser;
 use T3G\Elasticorn\IndexUtility;
 
+/**
+ * Class InitCommand
+ *
+ * Command to initialize Elastic index(es)
+ *
+ * @package T3G\Elasticorn\Commands
+ */
 class InitCommand extends Command
 {
+    /**
+     * Configure the init command
+     */
     protected function configure()
     {
         $this
@@ -21,6 +31,11 @@ class InitCommand extends Command
 
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return void
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('Initializing...');
