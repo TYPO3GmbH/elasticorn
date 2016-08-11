@@ -24,7 +24,8 @@ class DependencyInjectionContainer
 
         $container
             ->register('logger', ConsoleLogger::class)
-            ->addArgument('%logger.output%');
+            ->addArgument('%logger.output%')
+            ->addArgument('%logger.verbosityMap%');
 
         $container
             ->register('indexUtility', IndexUtility::class)

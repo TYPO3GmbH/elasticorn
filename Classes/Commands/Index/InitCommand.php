@@ -1,10 +1,11 @@
 <?php
 declare(strict_types = 1);
-namespace T3G\Elasticorn\Commands;
+namespace T3G\Elasticorn\Commands\Index;
 
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
  * Class InitCommand
@@ -35,9 +36,11 @@ class InitCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Initializing...');
-        $this->indexUtility->initIndices();
-        $output->writeln('... done.');
+        try {
+            $this->indexUtility->initIndices();
+        } catch (\InvalidArgumentException $e) {
+            $output->writeln('<error>' . $e->getMessage() . '</error>');
+        }
     }
 
 }

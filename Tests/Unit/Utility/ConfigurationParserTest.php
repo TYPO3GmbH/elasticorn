@@ -48,6 +48,38 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
      * @test
      * @return void
      */
+    public function convertDocumentTypeConfigToElasticaMapping()
+    {
+        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations('footest');
+
+        $expected = [
+            'tweets' => [
+                'properties' => [
+                    'name' => [
+                        'type' => 'string'
+                    ]
+                ]
+            ],
+            'users' => [
+                'properties' => [
+                    'first_name' => [
+                        'type' => 'string'
+                    ]
+                ]
+            ],
+        ];
+
+        $converted = $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
+            $documentTypeConfigurations
+        );
+
+        self::assertSame($expected, $converted);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function testGetDocumentTypeConfigFetchesConfigurationBasedOnIndexAndDocumentType()
     {
         $expectedConfig = [

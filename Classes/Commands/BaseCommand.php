@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace T3G\Elasticorn\Commands;
 
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,8 +21,12 @@ class BaseCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         global $container;
-        $container
-            ->setParameter('logger.output', $output);
+        $verbosityLevelMap = [
+            LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
+        ];
+        $container->setParameter('logger.output', $output);
+        $container->setParameter('logger.verbosityMap', $verbosityLevelMap);
         $_ENV['configurationPath'] = $input->getArgument('config-path');
         $this->indexUtility = $container->get('indexUtility');
     }

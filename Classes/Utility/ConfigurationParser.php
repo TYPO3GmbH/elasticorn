@@ -81,6 +81,21 @@ class ConfigurationParser
     }
 
     /**
+     * Convert document type configuration to mapping as returned from elastica (for comparison for example)
+     *
+     * @param array $configurations
+     * @return array
+     */
+    public function convertDocumentTypeConfigurationToMappingFromElastica(array $configurations) : array
+    {
+        $mappings = [];
+        foreach ($configurations as $index => $configuration) {
+            $mappings[$index]['properties'] = $configuration;
+        }
+        return $mappings;
+    }
+
+    /**
      * Get configuration for document type in index
      *
      * @param string $indexName

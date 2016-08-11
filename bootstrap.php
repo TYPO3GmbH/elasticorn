@@ -1,7 +1,9 @@
 <?php
 
-use T3G\Elasticorn\Commands\InitCommand;
-use T3G\Elasticorn\Commands\RemapCommand;
+use T3G\Elasticorn\Commands\Mapping\CompareCommand;
+use T3G\Elasticorn\Commands\Index\InitCommand;
+use T3G\Elasticorn\Commands\Index\RemapCommand;
+use T3G\Elasticorn\Commands\Mapping\ShowCommand;
 
 
 // dependency injection initialization
@@ -14,4 +16,6 @@ unset($di);
 $application = new \Symfony\Component\Console\Application();
 $application->add(new InitCommand());
 $application->add(new RemapCommand());
+$application->add(new CompareCommand());
+$application->add(new ShowCommand());
 $application->run();

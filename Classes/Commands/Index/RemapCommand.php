@@ -1,11 +1,12 @@
 <?php
 declare(strict_types = 1);
-namespace T3G\Elasticorn\Commands;
+namespace T3G\Elasticorn\Commands\Index;
 
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
  * Class RemapCommand
@@ -42,7 +43,6 @@ class RemapCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Initializing...');
         if ($input->hasArgument('index') && null !== $indexName = $input->getArgument('index')) {
             $output->writeln('Remapping and recreating index ' . $indexName);
             $this->indexUtility->remap($indexName);
@@ -50,7 +50,6 @@ class RemapCommand extends BaseCommand
             $output->writeln('Remapping and recreating all configured indices.');
             $this->indexUtility->remapAll();
         }
-        $output->writeln('... done.');
     }
 
 }

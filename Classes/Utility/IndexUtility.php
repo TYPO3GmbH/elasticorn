@@ -7,6 +7,7 @@ use Elastica\Index;
 use Elastica\Tool\CrossIndex;
 use Elastica\Type\Mapping;
 use Psr\Log\LoggerInterface;
+use SebastianBergmann\Diff\Differ;
 
 /**
  * Class IndexUtility
@@ -73,14 +74,36 @@ class IndexUtility
     }
 
     /**
-     * @todo finish this
+     * Compare mapping configurations (applied in elasticsearch and configured in file)
+     *
      * @param string $indexName
      */
     public function compareMappingConfiguration(string $indexName)
     {
         $index = $this->client->getIndex($indexName);
+        $this->logger->debug('Get current mapping for ' . $indexName);
         $mapping = $index->getMapping();
-        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName);
+
+        $this->logger->debug('Get mapping configuration for ' . $indexName);
+        $documentTypeConfigurations =
+            $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
+                $this->configurationParser->getDocumentTypeConfigurations($indexName)
+            );
+
+        if ($mapping === $documentTypeConfigurations) {
+            $this->logger->info('no difference between configurations.');
+        } else {
+            $differ = new Differ();
+            $diff = "\n" . $differ->diff(var_export($mapping, true), var_export($documentTypeConfigurations, true));
+            $this->logger->info($diff);
+        }
+    }
+
+    public function showMapping(string $indexName)
+    {
+        $index = $this->client->getIndex($indexName);
+        $mapping = $index->getMapping();
+        $this->logger->info('Current mapping:' . "\n" . var_export($mapping, true));
     }
 
 
