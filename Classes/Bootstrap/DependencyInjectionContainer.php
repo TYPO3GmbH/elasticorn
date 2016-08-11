@@ -17,7 +17,8 @@ class DependencyInjectionContainer
         $container = new ContainerBuilder();
 
         $container
-            ->register('configurationParser', ConfigurationParser::class);
+            ->register('configurationParser', ConfigurationParser::class)
+            ->addArgument(new Reference('logger'));
 
         $container
             ->register('elasticaClient', Client::class);

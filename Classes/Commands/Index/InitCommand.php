@@ -37,6 +37,7 @@ class InitCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
+            parent::execute($input, $output);
             $this->indexUtility->initIndices();
         } catch (\InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');

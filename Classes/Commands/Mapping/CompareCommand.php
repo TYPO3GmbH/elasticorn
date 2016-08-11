@@ -36,6 +36,7 @@ class CompareCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         $this->indexUtility->compareMappingConfiguration($input->getArgument('indexName'));
     }
 

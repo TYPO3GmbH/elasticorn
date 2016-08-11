@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Utility;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -20,13 +21,20 @@ class ConfigurationParser
      * @var string
      */
     private $configFolder;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
 
     /**
      * ConfigurationParser constructor.
+     *
+     * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
-        $this->configFolder = $_ENV['configurationPath'];
+        $this->configFolder = &$_ENV['configurationPath'];
+        $this->logger = $logger;
     }
 
     /**
@@ -37,7 +45,9 @@ class ConfigurationParser
     public function getIndexConfigurations() : array
     {
         $indices = [];
+        $this->logger->info('Loading configuration from ' . $this->configFolder);
         $filesInFolder = $this->getFilesInFolder($this->configFolder);
+        $this->logger->debug('Found: ' . var_export($filesInFolder, true));
         foreach ($filesInFolder as $indexName) {
             $subFolder = $this->configFolder . $indexName;
             if(is_dir($subFolder) === true && file_exists($subFolder . '/' . self::INDEX_CONF_FILENAME)) {
@@ -112,16 +122,16 @@ class ConfigurationParser
      * @param string $indexName
      * @return string
      */
-    private function getDocumentTypesDirectory(string $indexName)
+    private function getDocumentTypesDirectory(string $indexName) : string
     {
         return $this->getIndexDirectory($indexName) . '/DocumentTypes/';
     }
 
     /**
-     * @param $directory
+     * @param string $directory
      * @return array
      */
-    private function getFilesInFolder($directory)
+    private function getFilesInFolder(string $directory) : array
     {
         return array_diff(scandir($directory), ['..', '.']);
     }
@@ -130,7 +140,7 @@ class ConfigurationParser
      * @param string $indexName
      * @return string
      */
-    private function getIndexDirectory(string $indexName)
+    private function getIndexDirectory(string $indexName) : string
     {
         return $this->configFolder . ucfirst($indexName);
     }

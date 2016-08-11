@@ -35,6 +35,7 @@ class ShowCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         $this->indexUtility->showMapping($input->getArgument('indexName'));
     }
 

@@ -43,6 +43,7 @@ class RemapCommand extends BaseCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
         if ($input->hasArgument('index') && null !== $indexName = $input->getArgument('index')) {
             $output->writeln('Remapping and recreating index ' . $indexName);
             $this->indexUtility->remap($indexName);
