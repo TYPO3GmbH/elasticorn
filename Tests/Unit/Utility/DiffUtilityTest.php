@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
+use SebastianBergmann\Diff\Diff;
 use T3G\Elasticorn\Utility\DiffUtility;
 
 class DiffUtilityTest extends \PHPUnit_Framework_TestCase
@@ -70,28 +71,54 @@ class DiffUtilityTest extends \PHPUnit_Framework_TestCase
                     'store' => true,
                 ],
         ];
-        $expected = '--- On Server
-+++ In Configuration
-@@ @@
- Array
- (
-     [avatar.type] => string
-     [email.index] => not_analyzed
-     [email.store] => 1
+        $expected = '
 -    [email.type] => integer
-+    [email.type] => string
-     [fullname.index] => not_analyzed
-     [fullname.store] => 1
-     [fullname.type] => string
-     [id.type] => integer
-     [username.index] => not_analyzed
-     [username.store] => 1
-     [username.type] => string
- )';
++    [email.type] => string';
 
         $diffUtility = new DiffUtility();
         $result = $diffUtility->diff($arr, $arr2);
 
         self::assertContains($expected, $result);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
+    public function diffWithoutChangesTest()
+    {
+        $arr = [
+            'id' =>
+                [
+                    'type' => 'integer',
+                ],
+            'username' =>
+                [
+                    'type' => 'string',
+                    'index' => 'not_analyzed',
+                    'store' => true,
+                ],
+            'fullname' =>
+                [
+                    'type' => 'string',
+                    'index' => 'not_analyzed',
+                    'store' => true,
+                ],
+            'email' =>
+                [
+                    'type' => 'integer',
+                    'index' => 'not_analyzed',
+                    'store' => true,
+                ],
+            'avatar' =>
+                [
+                    'type' => 'string',
+                ],
+        ];
+
+        $diffUtility = new DiffUtility();
+        $diff = $diffUtility->diff($arr, $arr);
+
+        self::assertSame('', $diff);
     }
 }

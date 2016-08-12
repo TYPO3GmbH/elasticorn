@@ -99,11 +99,14 @@ class IndexUtility
         } else {
             foreach ($documentTypeConfigurations as $documentType => $configuration) {
                  if (isset($mapping[$documentType])) {
-                    if ($mapping[$documentType] === $configuration) {
+                    $difference = $diffUtility->diff(
+                        $mapping[$documentType]['properties'],
+                        $configuration['properties']
+                    );
+                     if ($difference === '') {
                         $this->logger->info('no difference between configurations of document type "' . $documentType . '"');
-                    } else {
-                        $diff = "Document Type \"$documentType\": \n" .
-                                $diffUtility->diff($mapping[$documentType]['properties'], $configuration['properties']);
+                     } else {
+                        $diff = "Document Type \"$documentType\": \n" . $difference;
                         $this->logger->info($diff);
                     }
                 }

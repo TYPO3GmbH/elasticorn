@@ -19,11 +19,15 @@ class DiffUtility
      */
     public function diff(array $arr, array $arr2) : string
     {
+        $result = '';
         $this->prepareArray($arr);
         $this->prepareArray($arr2);
-        $differ = new Differ("--- On Server\n+++ In Configuration\n");
-        $diff = $differ->diff(print_r($arr, true), print_r($arr2, true));
-        return print_r($diff, true);
+        if ($arr !== $arr2) {
+            $differ = new Differ("--- On Server\n+++ In Configuration\n", false);
+            $diff = $differ->diff(print_r($arr, true), print_r($arr2, true));
+            $result = print_r($diff, true);
+        }
+        return $result;
     }
 
     /**
