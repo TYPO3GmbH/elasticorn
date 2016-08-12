@@ -64,7 +64,25 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
             ],
             'users' => [
                 'properties' => [
-                    'first_name' => [
+                    'id' => [
+                        'type' => 'integer'
+                    ],
+                    'username' => [
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'store' => true
+                    ],
+                    'fullname' => [
+                        'type' => 'string',
+                        'index' => 'not_analyzed',
+                        'store' => true
+                    ],
+                    'email' => [
+                        'type' => 'integer',
+                        'index' => 'not_analyzed',
+                        'store' => true
+                    ],
+                    'avatar' => [
                         'type' => 'string'
                     ]
                 ]
@@ -108,7 +126,25 @@ class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'users' => [
-                'first_name' => [
+                'id' => [
+                    'type' => 'integer'
+                ],
+                'username' => [
+                    'type' => 'string',
+                    'index' => 'not_analyzed',
+                    'store' => true
+                ],
+                'fullname' => [
+                    'type' => 'string',
+                    'index' => 'not_analyzed',
+                    'store' => true
+                ],
+                'email' => [
+                    'type' => 'integer',
+                    'index' => 'not_analyzed',
+                    'store' => true
+                ],
+                'avatar' => [
                     'type' => 'string'
                 ]
             ]
