@@ -28,6 +28,8 @@ class RollbackCommand extends Command
         $result = $updater->rollback();
         if (false === $result) {
             $output->writeln('Something went wrong, rollback failed.');
+        } else {
+            $output->writeln(sprintf('Successfully performed rollback.'));
         }
     }
 }
