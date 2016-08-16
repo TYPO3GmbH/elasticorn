@@ -12,5 +12,5 @@ if (method_exists(Phar::class, 'running')) {
     }
 }
 
-require_once $basePath . '/vendor/autoload.php';
-require_once $basePath . '/bootstrap.php';
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/bootstrap.php';
