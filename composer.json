@@ -1,0 +1,35 @@
+{
+  "name": "T3G/elasticorn",
+  "description": "elastic manager based on elastica",
+  "minimum-stability": "dev",
+  "license": "GPL v3",
+  "authors": [
+    {
+      "name": "TYPO3 GmbH",
+      "email": "info@typo3.com"
+    }
+  ],
+  "require": {
+    "ruflin/elastica": "3.2.1",
+    "symfony/yaml": "^3.1",
+    "symfony/console": "^3.1",
+    "symfony/dependency-injection": "^3.1",
+    "sebastian/diff": "^1.4",
+    "vlucas/phpdotenv": "^2.3",
+    "padraic/phar-updater": "^1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "5.5.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "T3G\\Elasticorn\\": "Classes/"
+    }
+  },
+  "bin": [
+    "elasticorn.php"
+  ],
+  "config": {
+    "bin-dir": "bin"
+  }
+}
