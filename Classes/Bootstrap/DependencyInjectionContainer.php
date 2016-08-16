@@ -21,7 +21,10 @@ class DependencyInjectionContainer
             ->addArgument(new Reference('logger'));
 
         $container
-            ->register('elasticaClient', Client::class);
+            ->register('elasticaClient', Client::class)
+            ->addArgument($this->getElasticaConfiguration())
+            ->addArgument(null)
+            ->addArgument(new Reference('logger'));
 
         $container
             ->register('logger', ConsoleLogger::class)
@@ -35,5 +38,22 @@ class DependencyInjectionContainer
             ->addArgument(new Reference('logger'));
 
         return $container;
+    }
+
+    private function getElasticaConfiguration()
+    {
+        return array_filter([
+            'host' => getenv('elastica.host'),
+            'port' => getenv('elastica.port'),
+            'path' => getenv('elastica.path'),
+            'url' => getenv('elastica.url'),
+            'proxy' => getenv('elastica.proxy'),
+            'transport' => getenv('elastica.transport'),
+            'persistent' => getenv('elastica.persistent') ?? true,
+            'timeout' => getenv('elastica.timeout'),
+            'log' => true,
+            'username' => getenv('elastica.username'),
+            'password' => getenv('elastica.password'),
+        ]);
     }
 }

@@ -46,8 +46,16 @@ Download as .phar:
 
 * Insert download link here
 
-Configuration
--------------
+Elasticsearch Client Configuration
+----------------------------------
+
+Elasticorn assumes default connection parameters for establishing a connection to elasticsearch. 
+If you are using a non-default setup you can configure those connection settings in a .env file. 
+For details see below.
+
+
+Index and Mapping Configuration
+-------------------------------
 
 For elasticorn to work, your configuration needs to be structured in the following way and be defined as yaml.
 
@@ -66,11 +74,11 @@ project
 │   README.md    
 └───Elasticorn
 	└── t3_forger
-    	├── DocumentTypes
-    	│   ├── issue.yaml
-    	│   ├── review.yaml
-    	│   └── user.yaml
-    	└── IndexConfiguration.yaml
+    		├── DocumentTypes
+    		│   ├── issue.yaml
+    		│   ├── review.yaml
+    		│   └── user.yaml
+    		└── IndexConfiguration.yaml
 ~~~
 
 In our case the `Elasticorn` holds all information about our indices. Multiple indices can be managed by
@@ -109,6 +117,24 @@ For an example on how the configuration should look like, see the Tests/Fixtures
 For a list of available configuration options see the elastica documentation.
 
 You can use a .env file, a command line parameter or the interactive console to specify your configuration directory.
+
+### .env configuration
+
+You can specify your configuration directory as well as specific connection params in a .env file which should be 
+placed in the folder where elasticorn gets executed. The following variables may be configured:
+
+~~~
+configurationPath=
+elastica.host=
+elastica.port=
+elastica.path=
+elastica.url=
+elastica.transport=
+elastica.persistent=
+elastica.timeout=
+elastica.username=
+elastica=password=
+~~~
 
 Usage
 --------------
