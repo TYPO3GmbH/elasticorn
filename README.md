@@ -142,7 +142,7 @@ Usage
 composer based usage command:
 
 ~~~
-./cli.php -h
+./elasticorn.php -h
 ~~~
 
 phar usage command:
