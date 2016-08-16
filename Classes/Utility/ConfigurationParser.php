@@ -142,7 +142,11 @@ class ConfigurationParser
      */
     private function getIndexDirectory(string $indexName) : string
     {
-        return $this->configFolder . $indexName;
+        $indexDir = $this->configFolder . $indexName;
+        if (!file_exists($indexDir)) {
+            throw new \InvalidArgumentException('Configuration directory ' . $indexDir . ' for index ' . $indexName . ' does not exist.', 666);
+        }
+        return $indexDir;
     }
 
     /**
@@ -153,9 +157,26 @@ class ConfigurationParser
     private function getConfig(string $filePath) : array
     {
         if (!file_exists($filePath)) {
-            throw new \InvalidArgumentException('No configuration found at ' . $filePath);
+            throw new \InvalidArgumentException('No configuration found at ' . $filePath, 666);
         }
         $configFileContent = file_get_contents($filePath);
         return Yaml::parse($configFileContent);
+    }
+
+    public function createConfigurationForIndex(string $indexName, array $mapping, array $settings)
+    {
+        $this->createConfigurationDirectories($indexName);
+        $indexDirectory = $this->getIndexDirectory($indexName);
+        $documentTypesDirectory = $this->getDocumentTypesDirectory($indexName);
+        file_put_contents($indexDirectory . '/IndexConfiguration.yaml', Yaml::dump($settings));
+        foreach ($mapping as $documentType => $mappingConfig) {
+            file_put_contents($documentTypesDirectory . '/' . $documentType . '.yaml', Yaml::dump($mappingConfig['properties']));
+        }
+    }
+
+    private function createConfigurationDirectories(string $indexName)
+    {
+        mkdir($this->configFolder . $indexName);
+        mkdir($this->configFolder . $indexName . '/DocumentTypes');
     }
 }

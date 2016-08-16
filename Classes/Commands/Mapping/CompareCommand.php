@@ -14,7 +14,7 @@ use T3G\Elasticorn\Commands\BaseCommand;
 class CompareCommand extends BaseCommand
 {
     /**
-     * Configure the init command
+     * Configure the compare command
      *
      * @return void
      */

@@ -10,3 +10,13 @@ composer.phar
 
 /.env
 /bin/
+/phar-private.pem.passphrase-protected
+/phar-private.pem
+/phar-private-nopassphrase.pem
+/elasticorn.phar.pubkey
+/elasticorn.phar
+/elasticorn.phar.version
+/elasticorn.phar.temp.pubkey
+/elasticorn-old.phar
+/elasticorn-old.phar.pubkey
+/.TestClient/
