@@ -30,8 +30,11 @@ $application->add(new RemapCommand());
 $application->add(new CompareCommand());
 $application->add(new ShowCommand());
 $application->add(new CornifyCommand());
-$application->add(new UpdateCommand());
-$application->add(new RollbackCommand());
+
+if(true === $phar) {
+    $application->add(new UpdateCommand());
+    $application->add(new RollbackCommand());
+}
 
 
 $application->setName(

@@ -36,7 +36,13 @@ class UpdateCommand extends Command
         } else {
             $new = $updater->getNewVersion();
             $old = $updater->getOldVersion();
-            $output->writeln(sprintf('Updated from %s to %s. To perform a rollback use ./elasticorn.phar self:rollback', $old, $new));
+            $output->writeln(
+                sprintf(
+                    'Updated from %s to %s. To perform a rollback use ./elasticorn.phar self:rollback',
+                    $old,
+                    $new
+                )
+            );
         }
     }
 }
