@@ -6,7 +6,7 @@
     "Classes"
   ],
   "files": [
-    "elasticornphar.php",
+    "elasticorn.php",
     "bootstrap.php"
   ],
   "finder": [
@@ -20,7 +20,7 @@
     }
   ],
   "git-version": "package_version",
-  "main": "elasticornphar.php",
+  "main": "elasticorn.php",
   "key": "phar-private-nopassphrase.pem",
   "output": "elasticorn.phar",
   "stub": true

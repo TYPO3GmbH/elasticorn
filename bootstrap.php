@@ -11,7 +11,7 @@ use T3G\Elasticorn\Commands\Self\UpdateCommand;
 
 // env config
 if (file_exists(__DIR__ . '/.env')) {
-    $dotenv = new Dotenv\Dotenv(__DIR__);
+    $dotenv = new Dotenv\Dotenv($basePath);
     $dotenv->load();
 }
 
