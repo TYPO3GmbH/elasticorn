@@ -2,10 +2,11 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 
-class ConfigurationParserTest extends \PHPUnit_Framework_TestCase
+class ConfigurationParserTest extends TestCase
 {
     /**
      * @var ConfigurationParser

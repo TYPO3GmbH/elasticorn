@@ -2,10 +2,10 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
-
+use PHPUnit\Framework\TestCase;
 use T3G\Elasticorn\Utility\ArrayUtility;
 
-class ArrayUtilityTest extends \PHPUnit_Framework_TestCase
+class ArrayUtilityTest extends TestCase
 {
 
     /**

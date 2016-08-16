@@ -2,10 +2,10 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
-use SebastianBergmann\Diff\Diff;
+use PHPUnit\Framework\TestCase;
 use T3G\Elasticorn\Utility\DiffUtility;
 
-class DiffUtilityTest extends \PHPUnit_Framework_TestCase
+class DiffUtilityTest extends TestCase
 {
 
     /**
