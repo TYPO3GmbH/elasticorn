@@ -3,6 +3,10 @@
   "description": "elastic manager based on elastica",
   "minimum-stability": "dev",
   "license": "GPL v3",
+  "homepage": "http://elasticorn.net",
+  "support": {
+    "issues": "https://github.com/TYPO3IncTeam/elasticorn/issues"
+  },
   "authors": [
     {
       "name": "TYPO3 GmbH",
