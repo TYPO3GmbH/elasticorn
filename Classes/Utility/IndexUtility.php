@@ -2,6 +2,8 @@
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Utility;
 
+use cogpowered\FineDiff\Diff;
+use cogpowered\FineDiff\Granularity\Word;
 use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
@@ -91,24 +93,20 @@ class IndexUtility
             );
 
 
-        $differ = new Differ("--- On Server\n+++ In Configuration\n", true);
+        $diffUtility = new DiffUtility();
         if ($mapping === $documentTypeConfigurations) {
             $this->logger->info('no difference between configurations.');
         } else {
             foreach ($documentTypeConfigurations as $documentType => $configuration) {
-                if (isset($mapping[$documentType])) {
-                    $documentTypeMapping = $mapping[$documentType]['properties'];
-                    $configuration = $configuration['properties'];
-                    ksort($documentTypeMapping);
-                    ksort($configuration);
-                    if ($documentTypeMapping === $configuration) {
+                 if (isset($mapping[$documentType])) {
+                    $difference = $diffUtility->diff(
+                        $mapping[$documentType]['properties'],
+                        $configuration['properties']
+                    );
+                     if ($difference === '') {
                         $this->logger->info('no difference between configurations of document type "' . $documentType . '"');
-                    } else {
-                        $diff = "Document Type \"$documentType\": \n" .
-                                $differ->diff(
-                                    var_export($documentTypeMapping, true),
-                                    var_export($configuration, true)
-                                );
+                     } else {
+                        $diff = "Document Type \"$documentType\": \n" . $difference;
                         $this->logger->info($diff);
                     }
                 }

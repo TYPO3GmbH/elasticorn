@@ -4,13 +4,14 @@ namespace T3G\Elasticorn\Tests\Unit\Utility;
 
 use Elastica\Client;
 use Elastica\Index;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 use T3G\Elasticorn\Utility\IndexUtility;
 
-class IndexUtilityTest extends \PHPUnit_Framework_TestCase
+class IndexUtilityTest extends TestCase
 {
     /**
      * @var IndexUtility
