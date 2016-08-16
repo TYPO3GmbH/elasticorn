@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
 namespace T3G\Elasticorn\Utility;
+
 use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
