@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d55cb3b529a4f7a655d5e4418e1012bc",
-    "content-hash": "744167a2cbf89709ac743118de08c039",
+    "hash": "5d38a8afee07638bbcb29b1c32c889b6",
+    "content-hash": "debeeeb96663f9d16c31755bdcb1d83e",
     "packages": [
         {
             "name": "padraic/humbug_get_contents",

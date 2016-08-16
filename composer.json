@@ -1,5 +1,5 @@
 {
-  "name": "T3G/elasticorn",
+  "name": "t3g/elasticorn",
   "description": "elastic manager based on elastica",
   "minimum-stability": "dev",
   "license": "GPL v3",
