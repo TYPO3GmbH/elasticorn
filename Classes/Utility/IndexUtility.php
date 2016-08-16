@@ -44,6 +44,11 @@ class IndexUtility
         $this->logger = $logger;
     }
 
+    /**
+     * Creates configuration directories and files from settings and mappings of an existing index
+     *
+     * @param string $indexName
+     */
     public function createConfigurationFromExistingIndex(string $indexName)
     {
         $index = $this->client->getIndex($indexName);
@@ -52,6 +57,13 @@ class IndexUtility
         $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $settings->get());
     }
 
+    /**
+     * Rename an index (creates new index with data from old)
+     * CAUTION: All mappings are lost, only data is preserved
+     *
+     * @param string $indexName
+     * @param string $newName
+     */
     public function renameIndex(string $indexName, string $newName)
     {
         $index = $this->client->getIndex($indexName);
@@ -64,8 +76,6 @@ class IndexUtility
     /**
      * Add all indices found in configuration directory
      * Creates indices with suffixes _a and _b and adds an alias as indexName
-     *
-     * @throws \Exception
      */
     public function initIndices()
     {
@@ -75,12 +85,23 @@ class IndexUtility
         }
     }
 
+    /**
+     * Initializes a single index from config files
+     *
+     * @param string $indexName
+     */
     public function initIndex(string $indexName)
     {
         $config = $this->configurationParser->getIndexConfiguration($indexName);
         $this->createIndex($indexName, $config);
     }
 
+    /**
+     * Copy data from oldIndexName to newIndexName
+     *
+     * @param string $oldIndexName
+     * @param string $newIndexName
+     */
     public function copyData(string $oldIndexName, string $newIndexName)
     {
         $oldIndex = $this->client->getIndex($oldIndexName);
@@ -122,6 +143,9 @@ class IndexUtility
         }
     }
 
+    /**
+     * @param string $indexName
+     */
     public function showMapping(string $indexName)
     {
         $index = $this->client->getIndex($indexName);
@@ -177,11 +201,11 @@ class IndexUtility
      * @param $configuration1
      * @param $configuration2
      */
-    private function compareDocTypeConfiguration($configuration1, $configuration2)
+    private function compareDocTypeConfiguration(array $configuration1, array $configuration2)
     {
         $differ = new Differ("--- On Server\n+++ In Configuration\n", true);
         foreach ($configuration2 as $documentType => $configuration) {
-            if (isset($configuration1[$documentType])) {
+            if (array_key_exists($documentType, $configuration1)) {
                 $documentTypeMapping = $configuration1[$documentType]['properties'];
                 $configuration = $configuration['properties'];
                 ksort($documentTypeMapping);
