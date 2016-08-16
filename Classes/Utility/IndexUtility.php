@@ -204,7 +204,7 @@ class IndexUtility
      */
     private function compareDocTypeConfiguration(array $configuration1, array $configuration2)
     {
-        $differ = new Differ("--- On Server\n+++ In Configuration\n", true);
+        $differ = new DiffUtility();
         foreach ($configuration2 as $documentType => $configuration) {
             if (array_key_exists($documentType, $configuration1)) {
                 $documentTypeMapping = $configuration1[$documentType]['properties'];
@@ -217,10 +217,7 @@ class IndexUtility
                     );
                 } else {
                     $diff = "Document Type \"$documentType\": \n" .
-                            $differ->diff(
-                                var_export($documentTypeMapping, true),
-                                var_export($configuration, true)
-                            );
+                            $differ->diff($documentTypeMapping, $configuration);
                     $this->logger->info($diff);
                 }
             }
