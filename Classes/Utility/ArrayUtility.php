@@ -14,17 +14,17 @@ class ArrayUtility
     /**
      * @param array $array
      * @param string $prefix
-     * @param array $result
      * @return array
      */
-    public static function flatten(array $array, string $prefix = '', array $result = []) : array
+    public static function flatten(array $array, string $prefix = '') : array
     {
+        $result = [];
         foreach ($array as $key => $value) {
             if ($prefix) {
                 $key = $prefix . '.' . $key;
             }
             if (is_array($value)) {
-                $result = self::flatten($value, (string)$key, $result);
+                $result = array_merge($result, self::flatten($value, (string)$key));
             } else {
                 $result[$key] = is_scalar($value) ? $value : gettype($value);
             }
