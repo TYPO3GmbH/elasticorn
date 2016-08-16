@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
 
+use T3G\Elasticorn\Commands\Index\CornifyCommand;
 use T3G\Elasticorn\Commands\Mapping\CompareCommand;
 use T3G\Elasticorn\Commands\Index\InitCommand;
 use T3G\Elasticorn\Commands\Index\RemapCommand;
@@ -24,6 +25,7 @@ $application->add(new InitCommand());
 $application->add(new RemapCommand());
 $application->add(new CompareCommand());
 $application->add(new ShowCommand());
+$application->add(new CornifyCommand());
 $application->setName(
 <<<ASCIIART
                     Elasticorn!
