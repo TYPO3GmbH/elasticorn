@@ -54,9 +54,10 @@ class CornifyCommand extends BaseCommand
         }
 
         if (true === $continue) {
-            $this->indexUtility->renameIndex($indexName, $indexName . '_old');
+            $suffix = uniqid('_', true);
+            $this->indexUtility->renameIndex($indexName, $indexName . $suffix);
             $this->indexUtility->initIndex($indexName);
-            $this->indexUtility->copyData($indexName . '_old', $indexName);
+            $this->indexUtility->copyData($indexName . $suffix, $indexName);
         }
     }
 
