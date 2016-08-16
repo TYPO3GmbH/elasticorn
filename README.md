@@ -156,5 +156,6 @@ Commands
 
 + `index:init` - Initializes all configured indices
 + `index:remap` - applies a new mapping configuration to an existing index
++ `index:cornify` - Converts a conventional index to an elasticorn index
 + `mapping:compare` - allows comparison of currently applied and configured mapping
 + `mapping:show` - shows currently applied mapping
