@@ -10,7 +10,7 @@ use T3G\Elasticorn\Commands\Self\RollbackCommand;
 use T3G\Elasticorn\Commands\Self\UpdateCommand;
 
 // env config
-if (file_exists(__DIR__ . '/.env')) {
+if (file_exists($basePath . '/.env')) {
     $dotenv = new Dotenv\Dotenv($basePath);
     $dotenv->load();
 }
