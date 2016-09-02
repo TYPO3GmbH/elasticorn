@@ -149,6 +149,9 @@ class IndexService
      */
     public function compareMappingConfiguration(string $indexName) : string
     {
+        if (!($this->index instanceof Index)) {
+           $this->index = $this->client->getIndex($indexName);
+        }
         $mapping = $this->getMappingForIndex();
 
         $this->logger->debug('Get mapping configuration for ' . $indexName);
@@ -194,6 +197,7 @@ class IndexService
      */
     private function compareDocTypeConfiguration(array $configuration1, array $configuration2) : string
     {
+        $result = '';
         $differ = new DiffUtility();
         foreach ($configuration2 as $documentType => $configuration) {
             if (array_key_exists($documentType, $configuration1)) {
@@ -205,15 +209,15 @@ class IndexService
                     $this->logger->info(
                         'No difference between configurations of document type "' . $documentType . '"'
                     );
-			return '';
                 } else {
                     $diff = "Document Type \"$documentType\": \n" .
                             $differ->diff($documentTypeMapping, $configuration);
                     $this->logger->info($diff);
-return $diff;
+                    $result .= $diff;
                 }
             }
         }
+        return $result;
     }
 
     /**

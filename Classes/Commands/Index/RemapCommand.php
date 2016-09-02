@@ -53,7 +53,7 @@ class RemapCommand extends BaseCommand
     {
         parent::execute($input, $output);
         $force = false;
-        if($input->hasOption('force')) {
+        if($input->getOption('force')) {
             $force = true;
         }
         if ($input->hasArgument('indexName') && null !== $indexName = $input->getArgument('indexName')) {
