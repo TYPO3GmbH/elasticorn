@@ -117,14 +117,48 @@ class IndexService
      * Re-apply mappings to all indices found in configuration directory
      *
      * @see remap($indexName)
+     * @param bool $force
      */
-    public function remapAll()
+    public function remapAll(bool $force = false)
     {
         $indexConfigurations = $this->configurationService->getIndexConfigurations();
         $indices = array_keys($indexConfigurations);
         foreach ($indices as $indexName) {
-            $this->remap($indexName);
+            $this->remap($indexName, $force);
         }
+    }
+
+
+    /**
+     * Creates configuration directories and files from settings and mappings of an existing index
+     *
+     * @param string $indexName
+     */
+    public function createConfigurationFromExistingIndex(string $indexName)
+    {
+        $settings = $this->index->getSettings();
+        $mapping = $this->getMappingForIndex();
+        $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $settings->get());
+    }
+
+    /**
+     * Compare mapping configurations (applied in elasticsearch and configured in file)
+     *
+     * @param string $indexName
+     * @return string
+     */
+    public function compareMappingConfiguration(string $indexName) : string
+    {
+        $mapping = $this->getMappingForIndex();
+
+        $this->logger->debug('Get mapping configuration for ' . $indexName);
+        $documentTypeConfigurations =
+            $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
+                $this->configurationParser->getDocumentTypeConfigurations($indexName)
+            );
+
+
+        return $this->compareConfigurations($mapping, $documentTypeConfigurations);
     }
 
     /**
@@ -136,6 +170,52 @@ class IndexService
         return $this->index->getMapping();
     }
 
+
+    /**
+     * @param $configuration1
+     * @param $configuration2
+     * @return string
+     */
+    private function compareConfigurations($configuration1, $configuration2) : string
+    {
+        if ($configuration1 === $configuration2) {
+            $this->logger->info('No difference between configurations.');
+		return '';
+        } else {
+          return $this->compareDocTypeConfiguration($configuration1, $configuration2);        
+}
+    }
+
+
+    /**
+     * @param $configuration1
+     * @param $configuration2
+      * @return string
+     */
+    private function compareDocTypeConfiguration(array $configuration1, array $configuration2) : string
+    {
+        $differ = new DiffUtility();
+        foreach ($configuration2 as $documentType => $configuration) {
+            if (array_key_exists($documentType, $configuration1)) {
+                $documentTypeMapping = $configuration1[$documentType]['properties'];
+                $configuration = $configuration['properties'];
+                ksort($documentTypeMapping);
+                ksort($configuration);
+                if ($documentTypeMapping === $configuration) {
+                    $this->logger->info(
+                        'No difference between configurations of document type "' . $documentType . '"'
+                    );
+			return '';
+                } else {
+                    $diff = "Document Type \"$documentType\": \n" .
+                            $differ->diff($documentTypeMapping, $configuration);
+                    $this->logger->info($diff);
+return $diff;
+                }
+            }
+        }
+    }
+
     /**
      * Remap an index
      *
@@ -143,10 +223,19 @@ class IndexService
      * After successfully importing data the alias gets set to the new index
      *
      * @param string $indexName
+     * @param bool $force
      * @throws \InvalidArgumentException
      */
-    public function remap(string $indexName)
+    public function remap(string $indexName, bool $force = false)
     {
+        if ($this->compareMappingConfiguration($indexName) === '') {
+            if (false === $force) {
+                $this->logger->info('No difference between configurations, no remapping done');
+                return;
+            } else {
+                $this->logger->info('No difference between configurations but force given, remapping anyway.');
+            }
+        }
         $this->logger->info('Remapping ' . $indexName);
         $indexA = $this->client->getIndex($indexName . '_a');
         $indexB = $this->client->getIndex($indexName . '_b');
