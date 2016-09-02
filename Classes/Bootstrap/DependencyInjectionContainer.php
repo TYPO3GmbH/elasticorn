@@ -35,7 +35,8 @@ class DependencyInjectionContainer
             ->register('indexUtility', IndexUtility::class)
             ->addArgument(new Reference('elasticaClient'))
             ->addArgument(new Reference('configurationParser'))
-            ->addArgument(new Reference('logger'));
+            ->addArgument(new Reference('logger'))
+            ->addArgument('%index.name%');
 
         return $container;
     }

@@ -31,6 +31,11 @@ class BaseCommand extends Command
         if ($input->hasOption('config-path') && !empty($input->getOption('config-path'))) {
             $_ENV['configurationPath'] = $input->getOption('config-path');
         }
+        if($input->hasArgument('indexName')) {
+            $container->setParameter('index.name', $input->getArgument('indexName'));
+        } else {
+            $container->setParameter('index.name', null);
+        }
         $this->indexUtility = $container->get('indexUtility');
     }
 

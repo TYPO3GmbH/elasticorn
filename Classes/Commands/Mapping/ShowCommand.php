@@ -5,6 +5,7 @@ namespace T3G\Elasticorn\Commands\Mapping;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Yaml\Yaml;
 use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
@@ -36,7 +37,11 @@ class ShowCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $this->indexUtility->showMapping($input->getArgument('indexName'));
+        $mapping = $this->indexUtility->getMappingForIndex();
+        $dump = Yaml::dump($mapping, 20, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
+        $output->write(
+            $dump
+        );
     }
 
 }
