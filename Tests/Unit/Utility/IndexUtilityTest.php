@@ -9,15 +9,15 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Service\ConfigurationService;
+use T3G\Elasticorn\Service\IndexService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
-use T3G\Elasticorn\Utility\IndexUtility;
 
 class IndexUtilityTest extends TestCase
 {
     /**
-     * @var IndexUtility
+     * @var IndexService
      */
-    protected $indexUtility;
+    protected $indexService;
 
     /**
      * @var Client|ObjectProphecy
@@ -49,7 +49,7 @@ class IndexUtilityTest extends TestCase
         $this->configServiceProphecy = $this->prophesize(ConfigurationService::class);
         $this->loggerProphecy = $this->prophesize(LoggerInterface::class);
 
-        $this->indexUtility = new IndexUtility(
+        $this->indexService = new IndexService(
             $this->clientProphecy->reveal(),
             $this->configServiceProphecy->reveal(),
             $this->loggerProphecy->reveal()
@@ -76,7 +76,7 @@ class IndexUtilityTest extends TestCase
         $indexProphecy->create(Argument::any())->willReturn();
         $indexProphecy->addAlias(Argument::any())->willReturn();
 
-        $this->indexUtility->initIndices();
+        $this->indexService->initIndices();
 
         $this->clientProphecy->getIndex('testindex_a')->shouldHaveBeenCalled();
         $this->clientProphecy->getIndex('testindex_b')->shouldHaveBeenCalled();

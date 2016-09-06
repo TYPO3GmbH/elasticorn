@@ -37,7 +37,7 @@ class ShowCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $mapping = $this->indexUtility->getMappingForIndex();
+        $mapping = $this->indexService->getMappingForIndex();
         $dump = Yaml::dump($mapping, 20, 4, Yaml::DUMP_MULTI_LINE_LITERAL_BLOCK);
         $output->write(
             $dump

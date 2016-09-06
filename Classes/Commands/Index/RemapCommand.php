@@ -46,10 +46,10 @@ class RemapCommand extends BaseCommand
         parent::execute($input, $output);
         if ($input->hasArgument('index') && null !== $indexName = $input->getArgument('index')) {
             $output->writeln('Remapping and recreating index ' . $indexName);
-            $this->indexUtility->remap($indexName);
+            $this->indexService->remap($indexName);
         } else {
             $output->writeln('Remapping and recreating all configured indices.');
-            $this->indexUtility->remapAll();
+            $this->indexService->remapAll();
         }
     }
 

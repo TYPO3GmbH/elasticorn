@@ -31,7 +31,7 @@ class ConfigurationService
     private $logger;
 
     /**
-     * IndexUtility constructor.
+     * ConfigurationService constructor.
      *
      * @param \Elastica\Client $client
      * @param \T3G\Elasticorn\Utility\ConfigurationParser $configurationParser
