@@ -15,7 +15,7 @@ Feature: Compare mapping
     Given I use alternative configuration folder with changes
     When I call elasticorn "mapping:compare footest"
     Then I should see:
-    """
+"""
 [info] Document Type "tweets":
 --- On Server
 +++ In Configuration
@@ -27,7 +27,7 @@ Feature: Compare mapping
 +++ In Configuration
 -    [email.type] => string
 +    [email.type] => integer
-    """
+"""
 
   Scenario: Get help if argument indexName is missing
     When I call elasticorn "mapping:compare"

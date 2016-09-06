@@ -41,18 +41,20 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^I should see "([^"]*)"$/
+     * @Given /^I don't have any indices$/
      */
-    public function iShouldSee($expected)
+    public function iDonTHaveAnyIndices()
     {
-        assertEquals($expected, $this->output);
+        $client = new \Elastica\Client();
+        $client->getIndex('_all')->delete();
+        $client->getIndex('_all')->clearCache();
     }
 
-
     /**
+     * @Then /^I should see "([^"]*)"$/
      * @Then /^I should see:$/
      */
-    public function iShouldSee1(PyStringNode $expected)
+    public function iShouldSee(PyStringNode $expected)
     {
         assertEquals((string)$expected, $this->output);
     }
