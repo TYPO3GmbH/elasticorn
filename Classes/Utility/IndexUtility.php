@@ -1,17 +1,16 @@
 <?php
-declare(strict_types = 1);
+declare (strict_types = 1);
 namespace T3G\Elasticorn\Utility;
 
 use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
-use Elastica\Type\Mapping;
 use Psr\Log\LoggerInterface;
+use T3G\Elasticorn\Service\ConfigurationService;
 
 /**
  * Class IndexUtility
  *
- * @package T3G\Elasticorn
  */
 class IndexUtility
 {
@@ -26,14 +25,14 @@ class IndexUtility
     private $index;
 
     /**
-     * @var \T3G\Elasticorn\Utility\ConfigurationParser
-     */
-    private $configurationParser;
-
-    /**
      * @var \Psr\Log\LoggerInterface
      */
     private $logger;
+
+    /**
+     * @var \T3G\Elasticorn\Service\ConfigurationService
+     */
+    private $configurationService;
 
     /**
      * IndexUtility constructor.
@@ -50,11 +49,11 @@ class IndexUtility
         string $indexName = null
     ) {
         $this->client = $client;
-        $this->configurationParser = $configurationParser;
         $this->logger = $logger;
         if (null !== $indexName) {
             $this->index = $this->client->getIndex($indexName);
         }
+        $this->configurationService = new ConfigurationService($client, $configurationParser, $logger);
     }
 
     /**
@@ -77,7 +76,7 @@ class IndexUtility
      */
     public function initIndices()
     {
-        $indexConfigurations = $this->configurationParser->getIndexConfigurations();
+        $indexConfigurations = $this->configurationService->getIndexConfigurations();
         foreach ($indexConfigurations as $indexName => $configuration) {
             $this->createIndex($indexName, $configuration);
         }
@@ -90,7 +89,7 @@ class IndexUtility
      */
     public function initIndex(string $indexName)
     {
-        $config = $this->configurationParser->getIndexConfiguration($indexName);
+        $config = $this->configurationService->getIndexConfiguration($indexName);
         $this->createIndex($indexName, $config);
     }
 
@@ -107,7 +106,6 @@ class IndexUtility
         CrossIndex::reindex($oldIndex, $newIndex);
     }
 
-
     /**
      * Re-apply mappings to all indices found in configuration directory
      *
@@ -115,43 +113,35 @@ class IndexUtility
      */
     public function remapAll()
     {
-        $indexConfigurations = $this->configurationParser->getIndexConfigurations();
+        $indexConfigurations = $this->configurationService->getIndexConfigurations();
         $indices = array_keys($indexConfigurations);
         foreach ($indices as $indexName) {
             $this->remap($indexName);
         }
     }
 
-
     /**
      * Creates configuration directories and files from settings and mappings of an existing index
      *
      * @param string $indexName
+     * @deprecated use ConfigurationService->createConfigurationFromExistingIndex
      */
     public function createConfigurationFromExistingIndex(string $indexName)
     {
-        $settings = $this->index->getSettings();
-        $mapping = $this->getMappingForIndex();
-        $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $settings->get());
+        $this->logger->debug('IndexUtility->createConfigurationFromExistingIndex have been marked as deprecated, use ConfigurationService->createConfigurationFromExistingIndex instead');
+        $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->index);
     }
 
     /**
      * Compare mapping configurations (applied in elasticsearch and configured in file)
      *
      * @param string $indexName
+     * @deprecated use ConfigurationService->compareMappingConfiguration()
      */
     public function compareMappingConfiguration(string $indexName)
     {
-        $mapping = $this->getMappingForIndex();
-
-        $this->logger->debug('Get mapping configuration for ' . $indexName);
-        $documentTypeConfigurations =
-            $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
-                $this->configurationParser->getDocumentTypeConfigurations($indexName)
-            );
-
-
-        $this->compareConfigurations($mapping, $documentTypeConfigurations);
+        $this->logger->debug('IndexUtility->compareMappingConfiguration have been marked as deprecated, use ConfigurationService->compareMappingConfiguration instead');
+        $this->configurationService->compareMappingConfiguration($indexName, $this->index);
     }
 
     /**
@@ -161,47 +151,6 @@ class IndexUtility
     {
         $this->logger->debug('Get current mapping for ' . $this->index->getName());
         return $this->index->getMapping();
-    }
-
-
-    /**
-     * @param $configuration1
-     * @param $configuration2
-     */
-    private function compareConfigurations($configuration1, $configuration2)
-    {
-        if ($configuration1 === $configuration2) {
-            $this->logger->info('no difference between configurations.');
-        } else {
-            $this->compareDocTypeConfiguration($configuration1, $configuration2);
-        }
-    }
-
-
-    /**
-     * @param $configuration1
-     * @param $configuration2
-     */
-    private function compareDocTypeConfiguration(array $configuration1, array $configuration2)
-    {
-        $differ = new DiffUtility();
-        foreach ($configuration2 as $documentType => $configuration) {
-            if (array_key_exists($documentType, $configuration1)) {
-                $documentTypeMapping = $configuration1[$documentType]['properties'];
-                $configuration = $configuration['properties'];
-                ksort($documentTypeMapping);
-                ksort($configuration);
-                if ($documentTypeMapping === $configuration) {
-                    $this->logger->info(
-                        'no difference between configurations of document type "' . $documentType . '"'
-                    );
-                } else {
-                    $diff = "Document Type \"$documentType\": \n" .
-                            $differ->diff($documentTypeMapping, $configuration);
-                    $this->logger->info($diff);
-                }
-            }
-        }
     }
 
     /**
@@ -237,25 +186,6 @@ class IndexUtility
 
     /**
      * @param string $indexName
-     * @param Index $index
-     */
-    private function applyMapping(string $indexName, Index $index)
-    {
-        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName);
-        $this->logger->debug('Loading mapping for ' . $indexName);
-        foreach ($documentTypeConfigurations as $documentType => $configuration) {
-            $type = $index->getType($documentType);
-            $mapping = new Mapping();
-            $mapping->setType($type);
-            $mapping->setProperties($configuration);
-            $mapping->send();
-            $this->logger->debug('Applying mapping for ' . $documentType);
-        }
-    }
-
-
-    /**
-     * @param string $indexName
      * @param \Elastica\Index $index
      * @param $indexConfiguration
      */
@@ -263,10 +193,8 @@ class IndexUtility
     {
         $index->create($indexConfiguration);
         $this->logger->debug('Creating index ' . $indexName);
-
-        $this->applyMapping($indexName, $index);
+        $this->configurationService->applyMapping($indexName, $index);
     }
-
 
     /**
      * @param string $indexName
@@ -320,7 +248,7 @@ class IndexUtility
      */
     private function recreateIndex(string $indexName, Index $index)
     {
-        $indexConfiguration = $this->configurationParser->getIndexConfiguration($indexName);
+        $indexConfiguration = $this->configurationService->getIndexConfiguration($indexName);
         $this->logger->debug('Deleting index ' . $indexName);
         $index->delete();
         $this->createWithMapping($indexName, $index, $indexConfiguration);
