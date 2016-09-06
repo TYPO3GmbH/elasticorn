@@ -383,21 +383,29 @@
 			<div class="container text-center">
 				<h2>Documentation</h2>
 			</div>
-			<div class="container">
+            <div class="container">
 
 
-				<h3>Installation</h3>
+                <h3>Installation</h3>
 
-				<p>Composer based:</p>
-
-<pre><code>composer require t3g/elasticorn
-</code></pre>
-
-				<!--<p>Download as .phar:</p>-->
-
-				<!--<ul>-->
-					<!--<li>Insert download link here</li>-->
-				<!--</ul>-->
+                <div class="row">
+                <div class="col-md-6">
+                    <h3>Install .phar</h3>
+                    <p>
+                        Download both the phar and the pubkey file to the same folder. Call ./elasticorn.phar and
+                        you are good to go.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h3>Install via composer</h3>
+                    <p>
+                        local: <code>composer require t3g/elasticorn</code><br/>
+                        global: <code>composer global require t3g/elasticorn</code>
+                    </p>
+                </div>
+            </div>
+            </div>
+            <div class="container">
 
 				<h3>Elasticsearch Client Configuration</h3>
 
@@ -532,7 +540,6 @@ elastica=password=
 				</div>
 			</div>
 		</section>
-
 		<hr/>
 
 		<!-- Map section -->
