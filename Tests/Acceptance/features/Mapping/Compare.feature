@@ -4,6 +4,7 @@ Feature: Compare mapping
   compare the configuration on disk with the mapping on the server
 
   Scenario: Show configured mapping if no changes exist
+    Given I initialized my indices
     When I call elasticorn "mapping:compare footest"
     Then I should see:
   """
@@ -12,7 +13,8 @@ Feature: Compare mapping
   """
 
   Scenario: Show configured mapping containing changes
-    Given I use alternative configuration folder with changes
+    Given I initialized my indices
+    And I use alternative configuration folder with changes
     When I call elasticorn "mapping:compare footest"
     Then I should see:
 """
@@ -30,6 +32,7 @@ Feature: Compare mapping
 """
 
   Scenario: Get help if argument indexName is missing
+    Given I initialized my indices
     When I call elasticorn "mapping:compare"
     Then I should see message containing 'Not enough arguments (missing: "indexName")'
     And I should see message containing 'mapping:compare [-c|--config-path CONFIG-PATH] [--] <indexName>'

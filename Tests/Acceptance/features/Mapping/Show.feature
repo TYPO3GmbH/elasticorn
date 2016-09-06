@@ -4,6 +4,7 @@ Feature: Show mapping
   view the configuration
 
   Scenario: Show configured mapping
+    Given I initialized my indices
     When I call elasticorn "mapping:show footest"
     Then I should see:
   """
