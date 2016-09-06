@@ -10,7 +10,7 @@ use T3G\Elasticorn\Utility\ConfigurationParser;
 use T3G\Elasticorn\Utility\DiffUtility;
 
 /**
- * Class IndexUtility
+ * Class ConfigurationService
  *
  */
 class ConfigurationService

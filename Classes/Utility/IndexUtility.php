@@ -38,22 +38,30 @@ class IndexUtility
      * IndexUtility constructor.
      *
      * @param \Elastica\Client $client
-     * @param \T3G\Elasticorn\Utility\ConfigurationParser $configurationParser
+     * @param \T3G\Elasticorn\Service\ConfigurationService $configurationService
      * @param \Psr\Log\LoggerInterface $logger
      * @param string $indexName
      */
     public function __construct(
         Client $client,
-        ConfigurationParser $configurationParser,
+        ConfigurationService $configurationService,
         LoggerInterface $logger,
         string $indexName = null
     ) {
         $this->client = $client;
         $this->logger = $logger;
+        $this->configurationService = $configurationService;
         if (null !== $indexName) {
             $this->index = $this->client->getIndex($indexName);
         }
-        $this->configurationService = new ConfigurationService($client, $configurationParser, $logger);
+    }
+
+    /**
+     * @return Index|null
+     */
+    public function getIndex()
+    {
+        return $this->index;
     }
 
     /**
@@ -118,30 +126,6 @@ class IndexUtility
         foreach ($indices as $indexName) {
             $this->remap($indexName);
         }
-    }
-
-    /**
-     * Creates configuration directories and files from settings and mappings of an existing index
-     *
-     * @param string $indexName
-     * @deprecated use ConfigurationService->createConfigurationFromExistingIndex
-     */
-    public function createConfigurationFromExistingIndex(string $indexName)
-    {
-        $this->logger->debug('IndexUtility->createConfigurationFromExistingIndex have been marked as deprecated, use ConfigurationService->createConfigurationFromExistingIndex instead');
-        $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->index);
-    }
-
-    /**
-     * Compare mapping configurations (applied in elasticsearch and configured in file)
-     *
-     * @param string $indexName
-     * @deprecated use ConfigurationService->compareMappingConfiguration()
-     */
-    public function compareMappingConfiguration(string $indexName)
-    {
-        $this->logger->debug('IndexUtility->compareMappingConfiguration have been marked as deprecated, use ConfigurationService->compareMappingConfiguration instead');
-        $this->configurationService->compareMappingConfiguration($indexName, $this->index);
     }
 
     /**

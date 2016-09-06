@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
+use T3G\Elasticorn\Service\ConfigurationService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 use T3G\Elasticorn\Utility\IndexUtility;
 
@@ -29,6 +30,11 @@ class IndexUtilityTest extends TestCase
     protected $configParserProphecy;
 
     /**
+     * @var ConfigurationService|ObjectProphecy
+     */
+    protected $configServiceProphecy;
+
+    /**
      * @var LoggerInterface|ObjectProphecy
      */
     protected $loggerProphecy;
@@ -40,11 +46,12 @@ class IndexUtilityTest extends TestCase
     {
         $this->clientProphecy = $this->prophesize(Client::class);
         $this->configParserProphecy = $this->prophesize(ConfigurationParser::class);
+        $this->configServiceProphecy = $this->prophesize(ConfigurationService::class);
         $this->loggerProphecy = $this->prophesize(LoggerInterface::class);
 
         $this->indexUtility = new IndexUtility(
             $this->clientProphecy->reveal(),
-            $this->configParserProphecy->reveal(),
+            $this->configServiceProphecy->reveal(),
             $this->loggerProphecy->reveal()
         );
     }
@@ -58,10 +65,10 @@ class IndexUtilityTest extends TestCase
         /** @var Index|ObjectProphecy $indexProphecy */
         $indexProphecy = $this->prophesize(Index::class);
 
-        $this->configParserProphecy->getIndexConfigurations()->willReturn([
-           'testindex' => [
-               'shards' => 4
-           ]
+        $this->configServiceProphecy->getIndexConfigurations()->willReturn([
+            'testindex' => [
+                'shards' => 4
+            ]
         ]);
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
         $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
