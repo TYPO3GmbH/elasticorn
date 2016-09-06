@@ -44,7 +44,10 @@ composer require T3G/elasticorn
 
 Download as .phar:
 
-* Insert download link here
+* http://elasticorn.net/elasticorn.phar && http://elasticorn.net/elasticorn.phar.pubkey
+
+Download the phar and the phar.pubkey file to a folder of your choice. If you want to be able to run elasticorn from anywhere
+make sure your folder is in your PATH. As the phar is signed the pubkey file should simply be in the same folder as the phar.
 
 Elasticsearch Client Configuration
 ----------------------------------
