@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use T3G\Elasticorn\Service\ConfigurationService;
 use T3G\Elasticorn\Utility\IndexUtility;
 
 class BaseCommand extends Command
@@ -18,6 +19,11 @@ class BaseCommand extends Command
      * @var IndexUtility
      */
     protected $indexUtility;
+
+    /**
+     * @var ConfigurationService
+     */
+    protected $configurationService;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -37,6 +43,7 @@ class BaseCommand extends Command
             $container->setParameter('index.name', null);
         }
         $this->indexUtility = $container->get('indexUtility');
+        $this->configurationService = $container->get('configurationService');
     }
 
     protected function configure()
