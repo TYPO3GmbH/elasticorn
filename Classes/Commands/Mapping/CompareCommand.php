@@ -37,7 +37,7 @@ class CompareCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        $this->configurationService->compareMappingConfiguration($input->getArgument('indexName'), $this->indexUtility->getIndex());
+        $this->configurationService->compareMappingConfiguration($input->getArgument('indexName'), $this->indexService->getIndex());
     }
 
 }

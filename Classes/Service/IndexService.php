@@ -1,18 +1,17 @@
 <?php
 declare (strict_types = 1);
-namespace T3G\Elasticorn\Utility;
+namespace T3G\Elasticorn\Service;
 
 use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
 use Psr\Log\LoggerInterface;
-use T3G\Elasticorn\Service\ConfigurationService;
 
 /**
- * Class IndexUtility
+ * Class IndexService
  *
  */
-class IndexUtility
+class IndexService
 {
     /**
      * @var \Elastica\Client
@@ -35,7 +34,7 @@ class IndexUtility
     private $configurationService;
 
     /**
-     * IndexUtility constructor.
+     * IndexService constructor.
      *
      * @param \Elastica\Client $client
      * @param \T3G\Elasticorn\Service\ConfigurationService $configurationService

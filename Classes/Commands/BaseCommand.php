@@ -10,15 +10,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use T3G\Elasticorn\Service\ConfigurationService;
-use T3G\Elasticorn\Utility\IndexUtility;
+use T3G\Elasticorn\Service\IndexService;
 
 class BaseCommand extends Command
 {
 
     /**
-     * @var IndexUtility
+     * @var IndexService
      */
-    protected $indexUtility;
+    protected $indexService;
 
     /**
      * @var ConfigurationService
@@ -42,7 +42,7 @@ class BaseCommand extends Command
         } else {
             $container->setParameter('index.name', null);
         }
-        $this->indexUtility = $container->get('indexUtility');
+        $this->indexService = $container->get('indexService');
         $this->configurationService = $container->get('configurationService');
     }
 
