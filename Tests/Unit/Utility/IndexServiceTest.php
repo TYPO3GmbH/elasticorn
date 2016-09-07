@@ -12,7 +12,7 @@ use T3G\Elasticorn\Service\ConfigurationService;
 use T3G\Elasticorn\Service\IndexService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 
-class IndexUtilityTest extends TestCase
+class IndexServiceTest extends TestCase
 {
     /**
      * @var IndexService
@@ -70,6 +70,7 @@ class IndexUtilityTest extends TestCase
                 'shards' => 4
             ]
         ]);
+        $this->configServiceProphecy->applyMapping('testindex', Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
         $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
         $indexProphecy->exists()->willReturn(false);
