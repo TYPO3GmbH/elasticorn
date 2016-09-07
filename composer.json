@@ -1,7 +1,7 @@
 {
   "name": "t3g/elasticorn",
   "description": "elastic manager based on elastica",
-  "minimum-stability": "dev",
+  "minimum-stability": "stable",
   "license": "GPL-3.0",
   "homepage": "http://elasticorn.net",
   "support": {
