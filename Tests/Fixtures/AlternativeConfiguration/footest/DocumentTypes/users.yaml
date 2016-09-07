@@ -9,7 +9,7 @@ fullname:
   index: not_analyzed
   store: true
 email:
-  type: string
+  type: integer
   index: not_analyzed
   store: true
 avatar:

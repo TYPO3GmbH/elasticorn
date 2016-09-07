@@ -162,3 +162,26 @@ Commands
 + `index:cornify` - Converts a conventional index to an elasticorn index
 + `mapping:compare` - allows comparison of currently applied and configured mapping
 + `mapping:show` - shows currently applied mapping
+
+Contributions and issues
+=========================
+
+All contributions are welcome. If you find any bugs, have problems or simply want to request a new
+feature feel free to add it to the issue tracker.
+
+If you want to contribute code-wise, fork the repository and create a pull request.
+
+Running the tests
+------------------
+
+Elasticorn comes with unit and acceptance tests.
+
+#### Unit tests
+You can run the unit test suite with `bin/phpunit -c Build phpunit.xml`.
+
+#### Acceptance tests
+
+> Note: The acceptance tests need a clean elasticsearch instance on localhost:9200 - do not execute these tests
+if you have other indices configured that you still need. The tests delete _all_ indices at various points.
+
+You can run the acceptance test suite with `bin/behat -c Tests/Acceptance/behat.yml`.

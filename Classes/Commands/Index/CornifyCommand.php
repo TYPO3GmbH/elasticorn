@@ -89,7 +89,7 @@ class CornifyCommand extends BaseCommand
     private function compareConfiguration(InputInterface $input, OutputInterface $output, $helper, $indexName)
     {
         $this->indexUtility->compareMappingConfiguration($indexName);
-        $question = new ConfirmationQuestion('Continue? [y/N]', false);
+        $question = new ConfirmationQuestion('Continue? [Y/n]', true);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('User aborted.');
             return false;
