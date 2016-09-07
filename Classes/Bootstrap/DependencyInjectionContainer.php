@@ -6,8 +6,9 @@ use Elastica\Client;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use T3G\Elasticorn\Service\ConfigurationService;
+use T3G\Elasticorn\Service\IndexService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
-use T3G\Elasticorn\Utility\IndexUtility;
 
 class DependencyInjectionContainer
 {
@@ -32,9 +33,15 @@ class DependencyInjectionContainer
             ->addArgument('%logger.verbosityMap%');
 
         $container
-            ->register('indexUtility', IndexUtility::class)
+            ->register('configurationService', ConfigurationService::class)
             ->addArgument(new Reference('elasticaClient'))
             ->addArgument(new Reference('configurationParser'))
+            ->addArgument(new Reference('logger'));
+
+        $container
+            ->register('indexService', IndexService::class)
+            ->addArgument(new Reference('elasticaClient'))
+            ->addArgument(new Reference('configurationService'))
             ->addArgument(new Reference('logger'))
             ->addArgument('%index.name%');
 

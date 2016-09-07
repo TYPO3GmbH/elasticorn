@@ -38,7 +38,7 @@ class InitCommand extends BaseCommand
     {
         try {
             parent::execute($input, $output);
-            $this->indexUtility->initIndices();
+            $this->indexService->initIndices();
         } catch (\InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }

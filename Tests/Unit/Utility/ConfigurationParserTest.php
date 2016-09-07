@@ -79,7 +79,7 @@ class ConfigurationParserTest extends TestCase
                         'store' => true
                     ],
                     'email' => [
-                        'type' => 'integer',
+                        'type' => 'string',
                         'index' => 'not_analyzed',
                         'store' => true
                     ],
@@ -141,7 +141,7 @@ class ConfigurationParserTest extends TestCase
                     'store' => true
                 ],
                 'email' => [
-                    'type' => 'integer',
+                    'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true
                 ],

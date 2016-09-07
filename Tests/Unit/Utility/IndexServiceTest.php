@@ -8,15 +8,16 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
+use T3G\Elasticorn\Service\ConfigurationService;
+use T3G\Elasticorn\Service\IndexService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
-use T3G\Elasticorn\Utility\IndexUtility;
 
-class IndexUtilityTest extends TestCase
+class IndexServiceTest extends TestCase
 {
     /**
-     * @var IndexUtility
+     * @var IndexService
      */
-    protected $indexUtility;
+    protected $indexService;
 
     /**
      * @var Client|ObjectProphecy
@@ -27,6 +28,11 @@ class IndexUtilityTest extends TestCase
      * @var ConfigurationParser|ObjectProphecy
      */
     protected $configParserProphecy;
+
+    /**
+     * @var ConfigurationService|ObjectProphecy
+     */
+    protected $configServiceProphecy;
 
     /**
      * @var LoggerInterface|ObjectProphecy
@@ -40,11 +46,12 @@ class IndexUtilityTest extends TestCase
     {
         $this->clientProphecy = $this->prophesize(Client::class);
         $this->configParserProphecy = $this->prophesize(ConfigurationParser::class);
+        $this->configServiceProphecy = $this->prophesize(ConfigurationService::class);
         $this->loggerProphecy = $this->prophesize(LoggerInterface::class);
 
-        $this->indexUtility = new IndexUtility(
+        $this->indexService = new IndexService(
             $this->clientProphecy->reveal(),
-            $this->configParserProphecy->reveal(),
+            $this->configServiceProphecy->reveal(),
             $this->loggerProphecy->reveal()
         );
     }
@@ -58,18 +65,19 @@ class IndexUtilityTest extends TestCase
         /** @var Index|ObjectProphecy $indexProphecy */
         $indexProphecy = $this->prophesize(Index::class);
 
-        $this->configParserProphecy->getIndexConfigurations()->willReturn([
-           'testindex' => [
-               'shards' => 4
-           ]
+        $this->configServiceProphecy->getIndexConfigurations()->willReturn([
+            'testindex' => [
+                'shards' => 4
+            ]
         ]);
+        $this->configServiceProphecy->applyMapping('testindex', Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
         $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
         $indexProphecy->exists()->willReturn(false);
         $indexProphecy->create(Argument::any())->willReturn();
         $indexProphecy->addAlias(Argument::any())->willReturn();
 
-        $this->indexUtility->initIndices();
+        $this->indexService->initIndices();
 
         $this->clientProphecy->getIndex('testindex_a')->shouldHaveBeenCalled();
         $this->clientProphecy->getIndex('testindex_b')->shouldHaveBeenCalled();
