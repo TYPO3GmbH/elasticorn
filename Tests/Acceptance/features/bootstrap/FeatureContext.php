@@ -128,8 +128,7 @@ class FeatureContext implements Context
     {
         $client = $this->getElasticaClient();
         $request = $client->request('_cat/indices?v')->getData();
-        assertContains($indexName . '_a', $request['message']);
-        assertContains($indexName . '_b', $request['message']);
+        assertContains($indexName, $request['message']);
         $index = $client->getIndex($indexName);
         assertTrue($index->exists());
     }
@@ -165,6 +164,14 @@ class FeatureContext implements Context
         foreach ($this->filesToDelete as $file) {
             @exec('rm -r ' . $file);
         }
+    }
+
+    /**
+     * @Given /^I use alternative configuration folder with changes and languages$/
+     */
+    public function iUseAlternativeConfigurationFolderWithChangesAndLanguages()
+    {
+        $_ENV['configurationPath'] = 'Tests/Fixtures/AlternativeConfigurationWithLanguages';
     }
 
     private function getElasticaClient() {

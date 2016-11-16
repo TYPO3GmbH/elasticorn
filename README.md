@@ -66,9 +66,11 @@ For elasticorn to work, your configuration needs to be structured in the followi
 - MAIN configuration directory
   - IndexName directory
     - IndexConfiguration.yaml
+    - ElasticornConfiguration.yaml*
     - DocumentTypes directory
       - documenttype.yaml (for example: tweets.yaml)
 ~~~
+\* optional
 
 ### Example
 
@@ -138,6 +140,46 @@ elastica.timeout=
 elastica.username=
 elastica=password=
 ~~~
+
+Configuring Languages
+---------------------
+
+Elasticorn is able to automatically generate indices per language if your setup matches the following basic conditions:
+
+* one index per language
+* default language analyzers are configured per field in your configuration
+* documents only have one language each
+
+If those conditions match add a config file called "Elasticorn.yaml" in your index directory, for example with this configuration:
+
+~~~
+languages:
+  - english
+  - german
+  - french
+~~~
+
+The language name has to be the name of an analyzer available in elasticsearch. On index initialization the following indices
+and aliases will be created:
+
+~~~
+Indices:
+  - indexname_english_a
+  - indexname_english_b
+  - indexname_german_a
+  - indexname_german_b
+  - indexname_french_a
+  - indexname_french_b
+
+Aliases:
+  - indexname_english
+  - indexname_german
+  - indexname_french
+  - indexname (pointing to first configured language)
+~~~
+
+You can add additional languages after initialization by calling index:remap.
+
 
 Usage
 --------------

@@ -6,6 +6,7 @@ use Elastica\Client;
 use Elastica\Index;
 use Elastica\Tool\CrossIndex;
 use Psr\Log\LoggerInterface;
+use T3G\Elasticorn\Configuration\ApplicationConfiguration;
 
 /**
  * Class IndexService
@@ -96,8 +97,9 @@ class IndexService
      */
     public function initIndex(string $indexName)
     {
-        $config = $this->configurationService->getIndexConfiguration($indexName);
-        $this->createIndex($indexName, $config);
+        $configuration = $this->configurationService->getIndexConfiguration($indexName);
+
+        $this->createIndex($indexName, $configuration);
     }
 
     /**
@@ -158,36 +160,56 @@ class IndexService
                 $this->logger->info('No difference between configurations but force given, remapping anyway.');
             }
         }
-        $this->logger->info('Remapping ' . $indexName);
-        $indexA = $this->client->getIndex($indexName . '_a');
-        $indexB = $this->client->getIndex($indexName . '_b');
-
-        if ($indexA->hasAlias($indexName)) {
-            $activeIndex = $indexA;
-            $inactiveIndex = $indexB;
-        } elseif ($indexB->hasAlias($indexName)) {
-            $activeIndex = $indexB;
-            $inactiveIndex = $indexA;
+        $languages = ApplicationConfiguration::getLanguageConfiguration();
+        if (count($languages) > 0) {
+            foreach ($languages as $language) {
+                $this->remapIndex($indexName, $language);
+            }
+            $this->logger->debug(
+                'Adding alias to ' . $indexName . '_' . $languages[0] . ' from ' . $indexName
+            );
+            $this->client->getIndex($indexName . '_' . $languages[0])->addAlias($indexName);
         } else {
-            throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
+            $this->remapIndex($indexName);
         }
-
-        $this->recreateIndex($indexName, $inactiveIndex);
-        $this->logger->debug('Reindexing data with new mapping.');
-        CrossIndex::reindex($activeIndex, $inactiveIndex);
-        $this->switchAlias($indexName, $activeIndex, $inactiveIndex);
     }
 
     /**
      * @param string $indexName
-     * @param \Elastica\Index $index
-     * @param $indexConfiguration
      */
-    private function createWithMapping(string $indexName, Index $index, $indexConfiguration)
+    private function remapIndex(string $indexName, string $language = '')
     {
-        $index->create($indexConfiguration);
-        $this->logger->debug('Creating index ' . $indexName);
-        $this->configurationService->applyMapping($indexName, $index);
+        $aliasName = $indexName;
+        $languageMessage = '';
+        if ($language) {
+            $aliasName .= '_' . $language;
+            $languageMessage = ' in language ' . $language;
+        }
+        $this->logger->info('Remapping ' . $indexName . $languageMessage);
+        $primaryIndexIdentifier = $this->getFullIndexIdentifier($indexName, 'a', $language);
+        $indexA = $this->client->getIndex($primaryIndexIdentifier);
+        if ($indexA->exists()) {
+            $indexB = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'b', $language));
+
+            if ($indexA->hasAlias($aliasName)) {
+                $activeIndex = $indexA;
+                $inactiveIndex = $indexB;
+            } elseif ($indexB->hasAlias($aliasName)) {
+                $activeIndex = $indexB;
+                $inactiveIndex = $indexA;
+            } else {
+                throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
+            }
+
+            $this->recreateIndex($indexName, $inactiveIndex, $language);
+            $this->logger->debug('Reindexing data with new mapping.');
+            CrossIndex::reindex($activeIndex, $inactiveIndex);
+            $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
+        } else {
+            $configuration = $this->configurationService->getIndexConfigurations();
+            $this->createPrimaryIndex($indexName, $configuration, $language);
+            $this->createSecondaryIndex($indexName, $configuration, $language);
+        }
     }
 
     /**
@@ -211,40 +233,73 @@ class IndexService
     {
         $this->logger->info('Creating index ' . $indexName);
         $index = $this->client->getIndex($indexName);
+        $languages = ApplicationConfiguration::getLanguageConfiguration();
         if (!$index->exists()) {
-            $this->createIndexWithSuffix($indexName, '_a', true, $configuration);
-            $this->createIndexWithSuffix($indexName, '_b', false, $configuration);
+            if (count($languages) > 0) {
+                foreach ($languages as $language) {
+                    $this->createPrimaryIndex($indexName, $configuration, $language);
+                    $this->createSecondaryIndex($indexName, $configuration, $language);
+                }
+                $primaryIndex = $this->client->getIndex($indexName . '_' . $languages[0]);
+                $primaryIndex->addAlias($indexName);
+            } else {
+                $this->createPrimaryIndex($indexName, $configuration);
+                $this->createSecondaryIndex($indexName, $configuration);
+            }
         } else {
             throw new \InvalidArgumentException('Index ' . $indexName . ' already exists.');
         }
     }
 
+    private function createPrimaryIndex(string $indexName, array $configuration, string $language = '')
+    {
+        $index = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'a', $language));
+        $this->createWithMapping($indexName, $index, $configuration, $language);
+        $index->addAlias($indexName . ($language ? '_' . $language : ''));
+    }
+
     /**
      * @param string $indexName
-     * @param string $suffix
-     * @param bool $alias
      * @param array $configuration
+     * @param string $language
      */
-    private function createIndexWithSuffix(string $indexName, string $suffix, bool $alias, array $configuration)
+    private function createSecondaryIndex(string $indexName, array $configuration, string $language = '')
     {
-        $index = $this->client->getIndex($indexName . $suffix);
+        $index = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'b', $language));
+        $this->createWithMapping($indexName, $index, $configuration, $language);
+    }
 
-        $this->createWithMapping($indexName, $index, $configuration);
+    private function getFullIndexIdentifier(string $indexName, string $suffix = '', string $language = '')
+    {
+        return $indexName . ($language ? '_' . $language : '') . ($suffix ? '_' . $suffix : '');
+    }
 
-        if (true === $alias) {
-            $index->addAlias($indexName);
-        }
+    /**
+     * @param string $indexName
+     * @param \Elastica\Index $index
+     * @param $indexConfiguration
+     */
+    private function createWithMapping(
+        string $indexName,
+        Index $index,
+        array $indexConfiguration,
+        string $language = ''
+    ) {
+        $index->create($indexConfiguration);
+        $this->logger->debug('Creating index ' . $indexName);
+        $this->configurationService->applyMapping($indexName, $index, $language);
     }
 
     /**
      * @param string $indexName
      * @param Index $index
+     * @param string $language
      */
-    private function recreateIndex(string $indexName, Index $index)
+    private function recreateIndex(string $indexName, Index $index, string $language)
     {
         $indexConfiguration = $this->configurationService->getIndexConfiguration($indexName);
         $this->logger->debug('Deleting index ' . $indexName);
         $index->delete();
-        $this->createWithMapping($indexName, $index, $indexConfiguration);
+        $this->createWithMapping($indexName, $index, $indexConfiguration, $language);
     }
 }

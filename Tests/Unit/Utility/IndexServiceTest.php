@@ -62,15 +62,17 @@ class IndexServiceTest extends TestCase
      */
     public function initIndicesCreatesIndices()
     {
+        global $basePath;
         /** @var Index|ObjectProphecy $indexProphecy */
         $indexProphecy = $this->prophesize(Index::class);
+        $_ENV['configurationPath'] = $basePath . 'Tests/Fixtures/Configuration';
 
         $this->configServiceProphecy->getIndexConfigurations()->willReturn([
             'testindex' => [
                 'shards' => 4
             ]
         ]);
-        $this->configServiceProphecy->applyMapping('testindex', Argument::any())->willReturn();
+        $this->configServiceProphecy->applyMapping('testindex', Argument::any(), Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
         $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
         $indexProphecy->exists()->willReturn(false);

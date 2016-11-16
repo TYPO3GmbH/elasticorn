@@ -53,24 +53,17 @@ class BaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->askForConfigDir($input, $output);
+        while(!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
+            $this->askForConfigDir($input, $output);
+        }
         $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
     }
 
     private function askForConfigDir(InputInterface $input, OutputInterface $output)
     {
-        if (!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
             $helper = $this->getHelper('question');
             $question = new Question('Please enter a valid path to your configuration directory:' . "\n");
 
             $_ENV['configurationPath'] = $helper->ask($input, $output, $question);
-            if($this->askForConfigDir($input, $output) === true) {
-                return true;
-            } else {
-               $this->askForConfigDir($input, $output);
-            }
-        } else {
-            return true;
-        }
     }
 }

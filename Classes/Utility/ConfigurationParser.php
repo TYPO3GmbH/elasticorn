@@ -73,9 +73,10 @@ class ConfigurationParser
      * Get all document type configurations for index
      *
      * @param string $indexName
+     * @param string $language
      * @return array
      */
-    public function getDocumentTypeConfigurations(string $indexName) : array
+    public function getDocumentTypeConfigurations(string $indexName, string $language = '') : array
     {
         $configs = [];
         $directory = $this->getDocumentTypesDirectory($indexName);
@@ -85,6 +86,15 @@ class ConfigurationParser
             $pathInfo = pathinfo($filePath);
             if($pathInfo['extension'] === 'yaml') {
                 $configs[$pathInfo['filename']] = $this->getConfig($filePath);
+            }
+        }
+        if ($language !== '') {
+            foreach ($configs as $key => $field) {
+                foreach ($field as $name => $config) {
+                    if (array_key_exists('analyzer', $config)) {
+                        $configs[$key][$name]['analyzer'] = $language;
+                    }
+                }
             }
         }
         return $configs;
