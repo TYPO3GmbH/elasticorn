@@ -166,6 +166,14 @@ class FeatureContext implements Context
         }
     }
 
+    /**
+     * @Given /^I use alternative configuration folder with changes and languages$/
+     */
+    public function iUseAlternativeConfigurationFolderWithChangesAndLanguages()
+    {
+        $_ENV['configurationPath'] = 'Tests/Fixtures/AlternativeConfigurationWithLanguages';
+    }
+
     private function getElasticaClient() {
         return new \Elastica\Client();
     }

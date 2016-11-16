@@ -9,6 +9,14 @@ Feature: Remap an index
     When I call elasticorn "index:remap footest"
     Then I should see message containing '[info] Remapping footest'
 
+  Scenario: Remap an existing index (changes existing)
+    Given I initialized my indices
+    And I use alternative configuration folder with changes and languages
+    When I call elasticorn "index:remap footest"
+    Then I should see message containing '[info] Remapping footest in language english'
+    Then I should see message containing '[info] Remapping footest in language german'
+    Then I should see message containing '[info] Remapping footest in language french'
+
   Scenario: Remap an existing index (no changes)
     Given I initialized my indices
     When I call elasticorn "index:remap footest"
