@@ -117,13 +117,14 @@ class IndexService
      * Re-apply mappings to all indices found in configuration directory
      *
      * @see remap($indexName)
+     * @param bool $force
      */
-    public function remapAll()
+    public function remapAll(bool $force = false)
     {
         $indexConfigurations = $this->configurationService->getIndexConfigurations();
         $indices = array_keys($indexConfigurations);
         foreach ($indices as $indexName) {
-            $this->remap($indexName);
+            $this->remap($indexName, $force);
         }
     }
 
@@ -136,6 +137,7 @@ class IndexService
         return $this->index->getMapping();
     }
 
+
     /**
      * Remap an index
      *
@@ -143,10 +145,19 @@ class IndexService
      * After successfully importing data the alias gets set to the new index
      *
      * @param string $indexName
+     * @param bool $force
      * @throws \InvalidArgumentException
      */
-    public function remap(string $indexName)
+    public function remap(string $indexName, bool $force = false)
     {
+        if ($this->configurationService->compareMappingConfiguration($indexName) === '') {
+            if (false === $force) {
+                $this->logger->info('No difference between configurations, no remapping done');
+                return;
+            } else {
+                $this->logger->info('No difference between configurations but force given, remapping anyway.');
+            }
+        }
         $this->logger->info('Remapping ' . $indexName);
         $indexA = $this->client->getIndex($indexName . '_a');
         $indexB = $this->client->getIndex($indexName . '_b');
@@ -158,7 +169,7 @@ class IndexService
             $activeIndex = $indexB;
             $inactiveIndex = $indexA;
         } else {
-            throw new \InvalidArgumentException('no active index with name ' . $indexName . ' found.');
+            throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
         }
 
         $this->recreateIndex($indexName, $inactiveIndex);
