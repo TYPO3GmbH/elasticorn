@@ -55,9 +55,9 @@ class CornifyCommand extends BaseCommand
 
         if (true === $continue) {
             $suffix = uniqid('_', true);
-            $this->indexUtility->renameIndex($indexName, $indexName . $suffix);
-            $this->indexUtility->initIndex($indexName);
-            $this->indexUtility->copyData($indexName . $suffix, $indexName);
+            $this->indexService->renameIndex($indexName . $suffix);
+            $this->indexService->initIndex($indexName);
+            $this->indexService->copyData($indexName . $suffix, $indexName);
         }
     }
 
@@ -75,7 +75,7 @@ class CornifyCommand extends BaseCommand
             $output->writeln('Cannot continue without configuration.');
             return false;
         } else {
-            $this->indexUtility->createConfigurationFromExistingIndex($indexName);
+            $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->indexService->getIndex());
             return true;
         }
     }
@@ -88,8 +88,8 @@ class CornifyCommand extends BaseCommand
      */
     private function compareConfiguration(InputInterface $input, OutputInterface $output, $helper, $indexName)
     {
-        $this->indexUtility->compareMappingConfiguration($indexName);
-        $question = new ConfirmationQuestion('Continue? [y/N]', false);
+        $this->configurationService->compareMappingConfiguration($indexName, $this->indexService->getIndex());
+        $question = new ConfirmationQuestion('Continue? [Y/n]', true);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('User aborted.');
             return false;

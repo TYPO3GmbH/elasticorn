@@ -1,8 +1,8 @@
 {
   "name": "t3g/elasticorn",
   "description": "elastic manager based on elastica",
-  "minimum-stability": "dev",
-  "license": "GPL v3",
+  "minimum-stability": "stable",
+  "license": "GPL-3.0",
   "homepage": "http://elasticorn.net",
   "support": {
     "issues": "https://github.com/TYPO3IncTeam/elasticorn/issues"
@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "ruflin/elastica": "3.2.1",
+    "ruflin/elastica": "^3.2",
     "symfony/yaml": "^3.1",
     "symfony/console": "^3.1",
     "symfony/dependency-injection": "^3.1",
@@ -23,7 +23,8 @@
     "padraic/phar-updater": "^1.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "5.5.0"
+    "phpunit/phpunit": "5.5.0",
+    "behat/behat": "^3.1"
   },
   "autoload": {
     "psr-4": {

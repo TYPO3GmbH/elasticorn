@@ -44,7 +44,10 @@ composer require T3G/elasticorn
 
 Download as .phar:
 
-* Insert download link here
+* http://elasticorn.net/elasticorn.phar && http://elasticorn.net/elasticorn.phar.pubkey
+
+Download the phar and the phar.pubkey file to a folder of your choice. If you want to be able to run elasticorn from anywhere
+make sure your folder is in your PATH. As the phar is signed the pubkey file should simply be in the same folder as the phar.
 
 Elasticsearch Client Configuration
 ----------------------------------
@@ -63,9 +66,11 @@ For elasticorn to work, your configuration needs to be structured in the followi
 - MAIN configuration directory
   - IndexName directory
     - IndexConfiguration.yaml
+    - ElasticornConfiguration.yaml*
     - DocumentTypes directory
       - documenttype.yaml (for example: tweets.yaml)
 ~~~
+\* optional
 
 ### Example
 
@@ -136,6 +141,46 @@ elastica.username=
 elastica=password=
 ~~~
 
+Configuring Languages
+---------------------
+
+Elasticorn is able to automatically generate indices per language if your setup matches the following basic conditions:
+
+* one index per language
+* default language analyzers are configured per field in your configuration
+* documents only have one language each
+
+If those conditions match add a config file called "Elasticorn.yaml" in your index directory, for example with this configuration:
+
+~~~
+languages:
+  - english
+  - german
+  - french
+~~~
+
+The language name has to be the name of an analyzer available in elasticsearch. On index initialization the following indices
+and aliases will be created:
+
+~~~
+Indices:
+  - indexname_english_a
+  - indexname_english_b
+  - indexname_german_a
+  - indexname_german_b
+  - indexname_french_a
+  - indexname_french_b
+
+Aliases:
+  - indexname_english
+  - indexname_german
+  - indexname_french
+  - indexname (pointing to first configured language)
+~~~
+
+You can add additional languages after initialization by calling index:remap.
+
+
 Usage
 --------------
 
@@ -156,5 +201,29 @@ Commands
 
 + `index:init` - Initializes all configured indices
 + `index:remap` - applies a new mapping configuration to an existing index
++ `index:cornify` - Converts a conventional index to an elasticorn index
 + `mapping:compare` - allows comparison of currently applied and configured mapping
 + `mapping:show` - shows currently applied mapping
+
+Contributions and issues
+=========================
+
+All contributions are welcome. If you find any bugs, have problems or simply want to request a new
+feature feel free to add it to the issue tracker.
+
+If you want to contribute code-wise, fork the repository and create a pull request.
+
+Running the tests
+------------------
+
+Elasticorn comes with unit and acceptance tests.
+
+#### Unit tests
+You can run the unit test suite with `bin/phpunit -c Build phpunit.xml`.
+
+#### Acceptance tests
+
+> Note: The acceptance tests need a clean elasticsearch instance on localhost:9200 - do not execute these tests
+if you have other indices configured that you still need. The tests delete _all_ indices at various points.
+
+You can run the acceptance test suite with `bin/behat -c Tests/Acceptance/behat.yml`.

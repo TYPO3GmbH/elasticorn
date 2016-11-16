@@ -5,6 +5,7 @@ namespace T3G\Elasticorn\Commands\Index;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3G\Elasticorn\Commands\BaseCommand;
 
@@ -29,9 +30,16 @@ class RemapCommand extends BaseCommand
             ->setName('index:remap')
             ->setDescription('remap index');
         $this->addArgument(
-            'index',
+            'indexName',
             InputArgument::OPTIONAL,
             'The name of the index to remap (if none given, all will be re-indexed.)'
+        );
+
+        $this->addOption(
+            'force',
+            'f',
+            InputOption::VALUE_NONE,
+            'If enabled remapping will be forced, even if there are no changes.'
         );
 
     }
@@ -44,12 +52,16 @@ class RemapCommand extends BaseCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
-        if ($input->hasArgument('index') && null !== $indexName = $input->getArgument('index')) {
+        $force = false;
+        if($input->getOption('force')) {
+            $force = true;
+        }
+        if ($input->hasArgument('indexName') && null !== $indexName = $input->getArgument('indexName')) {
             $output->writeln('Remapping and recreating index ' . $indexName);
-            $this->indexUtility->remap($indexName);
+            $this->indexService->remap($indexName, $force);
         } else {
             $output->writeln('Remapping and recreating all configured indices.');
-            $this->indexUtility->remapAll();
+            $this->indexService->remapAll($force);
         }
     }
 

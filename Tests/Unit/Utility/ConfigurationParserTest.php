@@ -59,7 +59,8 @@ class ConfigurationParserTest extends TestCase
             'tweets' => [
                 'properties' => [
                     'name' => [
-                        'type' => 'string'
+                        'type' => 'string',
+                        'analyzer' => 'english'
                     ]
                 ]
             ],
@@ -79,12 +80,13 @@ class ConfigurationParserTest extends TestCase
                         'store' => true
                     ],
                     'email' => [
-                        'type' => 'integer',
+                        'type' => 'string',
                         'index' => 'not_analyzed',
                         'store' => true
                     ],
                     'avatar' => [
-                        'type' => 'string'
+                        'type' => 'string',
+                        'analyzer' => 'english'
                     ]
                 ]
             ],
@@ -105,7 +107,8 @@ class ConfigurationParserTest extends TestCase
     {
         $expectedConfig = [
             'name' => [
-                'type' => 'string'
+                'type' => 'string',
+                'analyzer' => 'english'
             ]
         ];
 
@@ -123,7 +126,8 @@ class ConfigurationParserTest extends TestCase
         $expectedConfig = [
             'tweets' => [
                 'name' => [
-                    'type' => 'string'
+                    'type' => 'string',
+                    'analyzer' => 'english'
                 ]
             ],
             'users' => [
@@ -141,12 +145,13 @@ class ConfigurationParserTest extends TestCase
                     'store' => true
                 ],
                 'email' => [
-                    'type' => 'integer',
+                    'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true
                 ],
                 'avatar' => [
-                    'type' => 'string'
+                    'type' => 'string',
+                    'analyzer' => 'english'
                 ]
             ]
         ];

@@ -9,15 +9,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use T3G\Elasticorn\Utility\IndexUtility;
+use T3G\Elasticorn\Service\ConfigurationService;
+use T3G\Elasticorn\Service\IndexService;
 
 class BaseCommand extends Command
 {
 
     /**
-     * @var IndexUtility
+     * @var IndexService
      */
-    protected $indexUtility;
+    protected $indexService;
+
+    /**
+     * @var ConfigurationService
+     */
+    protected $configurationService;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -31,7 +37,13 @@ class BaseCommand extends Command
         if ($input->hasOption('config-path') && !empty($input->getOption('config-path'))) {
             $_ENV['configurationPath'] = $input->getOption('config-path');
         }
-        $this->indexUtility = $container->get('indexUtility');
+        if($input->hasArgument('indexName')) {
+            $container->setParameter('index.name', $input->getArgument('indexName'));
+        } else {
+            $container->setParameter('index.name', null);
+        }
+        $this->indexService = $container->get('indexService');
+        $this->configurationService = $container->get('configurationService');
     }
 
     protected function configure()
@@ -41,24 +53,17 @@ class BaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->askForConfigDir($input, $output);
+        while(!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
+            $this->askForConfigDir($input, $output);
+        }
         $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
     }
 
     private function askForConfigDir(InputInterface $input, OutputInterface $output)
     {
-        if (!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
             $helper = $this->getHelper('question');
             $question = new Question('Please enter a valid path to your configuration directory:' . "\n");
 
             $_ENV['configurationPath'] = $helper->ask($input, $output, $question);
-            if($this->askForConfigDir($input, $output) === true) {
-                return true;
-            } else {
-               $this->askForConfigDir($input, $output);
-            }
-        } else {
-            return true;
-        }
     }
 }

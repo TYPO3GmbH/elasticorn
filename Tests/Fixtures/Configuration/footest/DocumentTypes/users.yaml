@@ -9,8 +9,9 @@ fullname:
   index: not_analyzed
   store: true
 email:
-  type: integer
+  type: string
   index: not_analyzed
   store: true
 avatar:
   type: string
+  analyzer: english
