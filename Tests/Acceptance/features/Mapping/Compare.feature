@@ -8,8 +8,8 @@ Feature: Compare mapping
     When I call elasticorn "mapping:compare footest"
     Then I should see:
   """
-  [info] no difference between configurations of document type "tweets"
-  [info] no difference between configurations of document type "users"
+  [info] No difference between configurations of document type "tweets"
+  [info] No difference between configurations of document type "users"
   """
 
   Scenario: Show configured mapping containing changes

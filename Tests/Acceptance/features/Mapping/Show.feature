@@ -8,10 +8,6 @@ Feature: Show mapping
     When I call elasticorn "mapping:show footest"
     Then I should see:
   """
-  tweets:
-      properties:
-          name:
-              type: string
   users:
       properties:
           avatar:
@@ -30,6 +26,10 @@ Feature: Show mapping
               type: string
               index: not_analyzed
               store: true
+  tweets:
+      properties:
+          name:
+              type: string
   """
 
   Scenario: Get help if argument indexName is missing

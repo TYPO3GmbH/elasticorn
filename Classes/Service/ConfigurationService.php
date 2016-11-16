@@ -70,9 +70,13 @@ class ConfigurationService
      *
      * @param string $indexName
      * @param Index $index
+     * @return string
      */
-    public function compareMappingConfiguration(string $indexName, Index $index)
+    public function compareMappingConfiguration(string $indexName, Index $index = null) : string
     {
+        if ($index === null) {
+            $index = $this->client->getIndex($indexName);
+        }
         $mapping = $index->getMapping();
         $this->logger->debug('Get mapping configuration for ' . $indexName);
         $documentTypeConfigurations =
@@ -80,7 +84,7 @@ class ConfigurationService
                 $this->configurationParser->getDocumentTypeConfigurations($indexName)
             );
 
-        $this->compareConfigurations($mapping, $documentTypeConfigurations);
+        return $this->compareConfigurations($mapping, $documentTypeConfigurations);
     }
 
     /**
@@ -117,22 +121,27 @@ class ConfigurationService
     /**
      * @param $configuration1
      * @param $configuration2
+     * @return string
      */
-    private function compareConfigurations($configuration1, $configuration2)
+    private function compareConfigurations($configuration1, $configuration2) : string
     {
+        $result = '';
         if ($configuration1 === $configuration2) {
             $this->logger->info('no difference between configurations.');
         } else {
-            $this->compareDocTypeConfiguration($configuration1, $configuration2);
+            $result = $this->compareDocTypeConfiguration($configuration1, $configuration2);
         }
+        return $result;
     }
 
     /**
      * @param $configuration1
      * @param $configuration2
+     * @return string
      */
-    private function compareDocTypeConfiguration(array $configuration1, array $configuration2)
+    private function compareDocTypeConfiguration(array $configuration1, array $configuration2) : string
     {
+        $result = '';
         $differ = new DiffUtility();
         foreach ($configuration2 as $documentType => $configuration) {
             if (array_key_exists($documentType, $configuration1)) {
@@ -142,14 +151,16 @@ class ConfigurationService
                 ksort($configuration);
                 if ($documentTypeMapping === $configuration) {
                     $this->logger->info(
-                        'no difference between configurations of document type "' . $documentType . '"'
+                        'No difference between configurations of document type "' . $documentType . '"'
                     );
                 } else {
                     $diff = "Document Type \"$documentType\": \n" .
-                        $differ->diff($documentTypeMapping, $configuration);
+                            $differ->diff($documentTypeMapping, $configuration);
                     $this->logger->info($diff);
+                    $result .= $diff;
                 }
             }
         }
+        return $result;
     }
 }

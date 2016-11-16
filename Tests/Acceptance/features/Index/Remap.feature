@@ -12,4 +12,14 @@ Feature: Remap an index
   Scenario: Remap an existing index (no changes)
     Given I initialized my indices
     When I call elasticorn "index:remap footest"
+    Then I should see message containing '[info] No difference between configurations of document type "tweets"'
+    Then I should see message containing '[info] No difference between configurations of document type "users"'
+    Then I should see message containing '[info] No difference between configurations, no remapping done'
+
+  Scenario: Remap an existing index (no changes) - forced
+    Given I initialized my indices
+    When I call elasticorn "index:remap footest --force"
+    Then I should see message containing '[info] No difference between configurations of document type "tweets"'
+    Then I should see message containing '[info] No difference between configurations of document type "users"'
+    Then I should see message containing '[info] No difference between configurations but force given, remapping anyway.'
     Then I should see message containing '[info] Remapping footest'

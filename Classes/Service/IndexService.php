@@ -128,42 +128,6 @@ class IndexService
         }
     }
 
-
-    /**
-     * Creates configuration directories and files from settings and mappings of an existing index
-     *
-     * @param string $indexName
-     */
-    public function createConfigurationFromExistingIndex(string $indexName)
-    {
-        $settings = $this->index->getSettings();
-        $mapping = $this->getMappingForIndex();
-        $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $settings->get());
-    }
-
-    /**
-     * Compare mapping configurations (applied in elasticsearch and configured in file)
-     *
-     * @param string $indexName
-     * @return string
-     */
-    public function compareMappingConfiguration(string $indexName) : string
-    {
-        if (!($this->index instanceof Index)) {
-           $this->index = $this->client->getIndex($indexName);
-        }
-        $mapping = $this->getMappingForIndex();
-
-        $this->logger->debug('Get mapping configuration for ' . $indexName);
-        $documentTypeConfigurations =
-            $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
-                $this->configurationParser->getDocumentTypeConfigurations($indexName)
-            );
-
-
-        return $this->compareConfigurations($mapping, $documentTypeConfigurations);
-    }
-
     /**
      * @return array
      */
@@ -173,52 +137,6 @@ class IndexService
         return $this->index->getMapping();
     }
 
-
-    /**
-     * @param $configuration1
-     * @param $configuration2
-     * @return string
-     */
-    private function compareConfigurations($configuration1, $configuration2) : string
-    {
-        if ($configuration1 === $configuration2) {
-            $this->logger->info('No difference between configurations.');
-		return '';
-        } else {
-          return $this->compareDocTypeConfiguration($configuration1, $configuration2);        
-}
-    }
-
-
-    /**
-     * @param $configuration1
-     * @param $configuration2
-      * @return string
-     */
-    private function compareDocTypeConfiguration(array $configuration1, array $configuration2) : string
-    {
-        $result = '';
-        $differ = new DiffUtility();
-        foreach ($configuration2 as $documentType => $configuration) {
-            if (array_key_exists($documentType, $configuration1)) {
-                $documentTypeMapping = $configuration1[$documentType]['properties'];
-                $configuration = $configuration['properties'];
-                ksort($documentTypeMapping);
-                ksort($configuration);
-                if ($documentTypeMapping === $configuration) {
-                    $this->logger->info(
-                        'No difference between configurations of document type "' . $documentType . '"'
-                    );
-                } else {
-                    $diff = "Document Type \"$documentType\": \n" .
-                            $differ->diff($documentTypeMapping, $configuration);
-                    $this->logger->info($diff);
-                    $result .= $diff;
-                }
-            }
-        }
-        return $result;
-    }
 
     /**
      * Remap an index
@@ -232,7 +150,7 @@ class IndexService
      */
     public function remap(string $indexName, bool $force = false)
     {
-        if ($this->compareMappingConfiguration($indexName) === '') {
+        if ($this->configurationService->compareMappingConfiguration($indexName) === '') {
             if (false === $force) {
                 $this->logger->info('No difference between configurations, no remapping done');
                 return;
@@ -251,7 +169,7 @@ class IndexService
             $activeIndex = $indexB;
             $inactiveIndex = $indexA;
         } else {
-            throw new \InvalidArgumentException('no active index with name ' . $indexName . ' found.');
+            throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
         }
 
         $this->recreateIndex($indexName, $inactiveIndex);
