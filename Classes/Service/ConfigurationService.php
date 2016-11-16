@@ -51,9 +51,9 @@ class ConfigurationService
      * @param string $indexName
      * @param Index $index
      */
-    public function applyMapping(string $indexName, Index $index)
+    public function applyMapping(string $indexName, Index $index, string $language = '')
     {
-        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName);
+        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName, $language);
         $this->logger->debug('Loading mapping for ' . $indexName);
         foreach ($documentTypeConfigurations as $documentType => $configuration) {
             $type = $index->getType($documentType);
@@ -127,7 +127,7 @@ class ConfigurationService
     {
         $result = '';
         if ($configuration1 === $configuration2) {
-            $this->logger->info('no difference between configurations.');
+            $this->logger->info('No difference between configurations.');
         } else {
             $result = $this->compareDocTypeConfiguration($configuration1, $configuration2);
         }

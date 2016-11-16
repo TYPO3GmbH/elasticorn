@@ -21,12 +21,14 @@ Feature: Compare mapping
 [info] Document Type "tweets":
 --- On Server
 +++ In Configuration
+-    [name.analyzer] => english
 -    [name.type] => string
 +    [name.type] => integer
 
 [info] Document Type "users":
 --- On Server
 +++ In Configuration
+-    [avatar.analyzer] => english
 -    [email.type] => string
 +    [email.type] => integer
 """

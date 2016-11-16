@@ -12,6 +12,7 @@ Feature: Show mapping
       properties:
           avatar:
               type: string
+              analyzer: english
           email:
               type: string
               index: not_analyzed
@@ -30,6 +31,7 @@ Feature: Show mapping
       properties:
           name:
               type: string
+              analyzer: english
   """
 
   Scenario: Get help if argument indexName is missing

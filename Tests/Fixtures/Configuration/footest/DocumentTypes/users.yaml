@@ -14,3 +14,4 @@ email:
   store: true
 avatar:
   type: string
+  analyzer: english
