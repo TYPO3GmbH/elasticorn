@@ -186,23 +186,30 @@ class IndexService
             $languageMessage = ' in language ' . $language;
         }
         $this->logger->info('Remapping ' . $indexName . $languageMessage);
-        $indexA = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'a', $language));
-        $indexB = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'b', $language));
+        $primaryIndexIdentifier = $this->getFullIndexIdentifier($indexName, 'a', $language);
+        $indexA = $this->client->getIndex($primaryIndexIdentifier);
+        if ($indexA->exists()) {
+            $indexB = $this->client->getIndex($this->getFullIndexIdentifier($indexName, 'b', $language));
 
-        if ($indexA->hasAlias($aliasName)) {
-            $activeIndex = $indexA;
-            $inactiveIndex = $indexB;
-        } elseif ($indexB->hasAlias($aliasName)) {
-            $activeIndex = $indexB;
-            $inactiveIndex = $indexA;
+            if ($indexA->hasAlias($aliasName)) {
+                $activeIndex = $indexA;
+                $inactiveIndex = $indexB;
+            } elseif ($indexB->hasAlias($aliasName)) {
+                $activeIndex = $indexB;
+                $inactiveIndex = $indexA;
+            } else {
+                throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
+            }
+
+            $this->recreateIndex($indexName, $inactiveIndex, $language);
+            $this->logger->debug('Reindexing data with new mapping.');
+            CrossIndex::reindex($activeIndex, $inactiveIndex);
+            $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
         } else {
-            throw new \InvalidArgumentException('No active index with name ' . $indexName . ' found.');
+            $configuration = $this->configurationService->getIndexConfigurations();
+            $this->createPrimaryIndex($indexName, $configuration, $language);
+            $this->createSecondaryIndex($indexName, $configuration, $language);
         }
-
-        $this->recreateIndex($indexName, $inactiveIndex, $language);
-        $this->logger->debug('Reindexing data with new mapping.');
-        CrossIndex::reindex($activeIndex, $inactiveIndex);
-        $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
     }
 
     /**
