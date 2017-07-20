@@ -10,9 +10,14 @@ use T3G\Elasticorn\Commands\Self\RollbackCommand;
 use T3G\Elasticorn\Commands\Self\UpdateCommand;
 
 // env config
-if (file_exists($basePath . '/.env')) {
-    $dotenv = new Dotenv\Dotenv($basePath);
-    $dotenv->load();
+// Determine the .env file in package directory ($baseBath === __DIR__) and getcwd()
+// this prevent path errors in case of global composer installation and package requirement
+foreach([$basePath . '/.env', getcwd() . '/.env'] as $file) {
+    if (file_exists($file)) {
+        $dotenv = new Dotenv\Dotenv($file);
+        $dotenv->load();
+        break;
+    }
 }
 
 // dependency injection initialization
