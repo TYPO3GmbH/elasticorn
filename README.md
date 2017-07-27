@@ -2,7 +2,7 @@ Elasticorn - PHP based elasticsearch manager
 =============================================
 
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
-
+Find the project homepage at http://elasticorn.net/.
 
 Features
 --------
