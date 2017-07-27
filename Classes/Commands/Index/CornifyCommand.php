@@ -74,10 +74,9 @@ class CornifyCommand extends BaseCommand
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('Cannot continue without configuration.');
             return false;
-        } else {
-            $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->indexService->getIndex());
-            return true;
         }
+        $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->indexService->getIndex());
+        return true;
     }
 
     /**

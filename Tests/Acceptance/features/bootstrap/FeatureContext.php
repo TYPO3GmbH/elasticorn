@@ -1,8 +1,7 @@
 <?php
 declare(strict_types = 1);
 use Behat\Behat\Context\Context;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
+use Elastica\Type\Mapping;
 
 require_once __DIR__ . '/../../../../vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 
@@ -44,7 +43,7 @@ class FeatureContext implements Context
     {
         chdir(__DIR__ . '/../../../../');
 
-        exec('./elasticorn.php -n ' . $command . ' -c ' . $_ENV['configurationPath'] . ' 2>&1', $output);
+        exec('php elasticorn.php -n ' . $command . ' -c ' . $_ENV['configurationPath'] . ' 2>&1', $output);
 
         $this->output = trim(implode("\n", $output));
     }
@@ -73,7 +72,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I have setup mappings and data for index "([^"]*)"$/
      */
-    public function iHaveSetupMappingsAndDataForIndex($indexName)
+    public function iHaveSetupMappingsAndDataForIndex()
     {
         // setup footest index with mappings and data
         $this->iCallElasticorn('index:init');
@@ -83,7 +82,7 @@ class FeatureContext implements Context
         $mapping = $baseIndex->getMapping();
         foreach ($mapping as $documentType => $properties) {
             $type = $this->index->getType($documentType);
-            $mappingConfig = new \Elastica\Type\Mapping($type, $properties['properties']);
+            $mappingConfig = new Mapping($type, $properties['properties']);
             $mappingConfig->send();
         }
         $this->index->clearCache();
@@ -99,6 +98,7 @@ class FeatureContext implements Context
 
     /**
      * @Given /^I should have a folder with the new "([^"]*)" configuration$/
+     * @param string $indexName
      */
     public function iShouldHaveAFolderWithTheNewConfiguration($indexName)
     {
@@ -112,8 +112,8 @@ class FeatureContext implements Context
      */
     public function iShouldHaveDocumentTypesConfigurationFilesFor($indexName)
     {
-        $expected = scandir($_ENV['configurationPath'] . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/');
-        $actual = scandir($_ENV['configurationPath'] . '/' . $indexName . '/DocumentTypes/');
+        $expected = scandir($_ENV['configurationPath'] . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/', 0);
+        $actual = scandir($_ENV['configurationPath'] . '/' . $indexName . '/DocumentTypes/', 0);
 
         assertSame($expected, $actual);
 
@@ -162,7 +162,7 @@ class FeatureContext implements Context
     {
         $this->deleteAllIndices();
         foreach ($this->filesToDelete as $file) {
-            @exec('rm -r ' . $file);
+            $this->rrmdir($file);
         }
     }
 
@@ -183,6 +183,23 @@ class FeatureContext implements Context
         $client = $this->getElasticaClient();
         $client->getIndex('_all')->delete();
         $client->getIndex('_all')->clearCache();
+    }
+
+    private function rrmdir($dir)
+    {
+        if (is_dir($dir)) {
+            $objects = scandir($dir, 0);
+            foreach ($objects as $object) {
+                if ($object !== '.' && $object !== '..') {
+                    if (is_dir($dir . '/' . $object)) {
+                        $this->rrmdir($dir . '/' . $object);
+                    } else {
+                        unlink($dir . '/' . $object);
+                    }
+                }
+            }
+            rmdir($dir);
+        }
     }
 
 }
