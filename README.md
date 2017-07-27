@@ -64,9 +64,9 @@ For elasticorn to work, your configuration needs to be structured in the followi
 
 ~~~
 - MAIN configuration directory
+  - Elasticorn.yaml*
   - IndexName directory
     - IndexConfiguration.yaml
-    - ElasticornConfiguration.yaml*
     - DocumentTypes directory
       - documenttype.yaml (for example: tweets.yaml)
 ~~~
