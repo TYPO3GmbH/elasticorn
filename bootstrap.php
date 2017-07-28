@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use T3G\Elasticorn\Commands\Index\CornifyCommand;
 use T3G\Elasticorn\Commands\Mapping\CompareCommand;
@@ -12,7 +12,7 @@ use T3G\Elasticorn\Commands\Self\UpdateCommand;
 // env config
 // Determine the .env file in package directory ($baseBath === __DIR__) and getcwd()
 // this prevent path errors in case of global composer installation and package requirement
-foreach([$basePath, getcwd()] as $directory) {
+foreach ([$basePath, getcwd()] as $directory) {
     if (file_exists($directory . DIRECTORY_SEPARATOR . '.env')) {
         $dotenv = new Dotenv\Dotenv($directory);
         $dotenv->load();
@@ -36,14 +36,14 @@ $application->add(new CompareCommand());
 $application->add(new ShowCommand());
 $application->add(new CornifyCommand());
 
-if(true === $phar) {
+if (true === $phar) {
     $application->add(new UpdateCommand());
     $application->add(new RollbackCommand());
 }
 
 
 $application->setName(
-<<<ASCIIART
+    <<<ASCIIART
                     Elasticorn!
                              \
                               \

@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
+
 namespace T3G\Elasticorn\Commands\Index;
 
 
@@ -45,15 +46,16 @@ class RemapCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
         $force = false;
-        if($input->getOption('force')) {
+        if ($input->getOption('force')) {
             $force = true;
         }
         if ($input->hasArgument('indexName') && null !== $indexName = $input->getArgument('indexName')) {

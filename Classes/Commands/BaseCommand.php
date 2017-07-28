@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace T3G\Elasticorn\Commands;
 
@@ -30,14 +30,14 @@ class BaseCommand extends Command
         global $container;
         $verbosityLevelMap = [
             LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
-            LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::INFO   => OutputInterface::VERBOSITY_NORMAL,
         ];
         $container->setParameter('logger.output', $output);
         $container->setParameter('logger.verbosityMap', $verbosityLevelMap);
         if ($input->hasOption('config-path') && !empty($input->getOption('config-path'))) {
             $_ENV['configurationPath'] = $input->getOption('config-path');
         }
-        if($input->hasArgument('indexName')) {
+        if ($input->hasArgument('indexName')) {
             $container->setParameter('index.name', $input->getArgument('indexName'));
         } else {
             $container->setParameter('index.name', null);
@@ -48,12 +48,17 @@ class BaseCommand extends Command
 
     protected function configure()
     {
-        $this->addOption('config-path', 'c', InputArgument::OPTIONAL, 'The full path to the configuration directory (may be relative)');
+        $this->addOption(
+            'config-path',
+            'c',
+            InputArgument::OPTIONAL,
+            'The full path to the configuration directory (may be relative)'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        while(!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
+        while (!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
             $this->askForConfigDir($input, $output);
         }
         $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
@@ -61,9 +66,9 @@ class BaseCommand extends Command
 
     private function askForConfigDir(InputInterface $input, OutputInterface $output)
     {
-            $helper = $this->getHelper('question');
-            $question = new Question('Please enter a valid path to your configuration directory:' . "\n");
+        $helper = $this->getHelper('question');
+        $question = new Question('Please enter a valid path to your configuration directory:' . "\n");
 
-            $_ENV['configurationPath'] = $helper->ask($input, $output, $question);
+        $_ENV['configurationPath'] = $helper->ask($input, $output, $question);
     }
 }
