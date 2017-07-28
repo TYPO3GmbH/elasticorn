@@ -1,6 +1,9 @@
 Elasticorn - PHP based elasticsearch manager
 =============================================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/?branch=develop)
+[![Build Status](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/build-status/develop)
+
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
 Find the project homepage at http://elasticorn.net/.
 

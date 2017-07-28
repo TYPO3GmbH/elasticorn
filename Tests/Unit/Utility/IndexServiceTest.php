@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
+
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
 use Elastica\Client;
@@ -65,13 +66,15 @@ class IndexServiceTest extends TestCase
         global $basePath;
         /** @var Index|ObjectProphecy $indexProphecy */
         $indexProphecy = $this->prophesize(Index::class);
-        $_ENV['configurationPath'] = $basePath . 'Tests/Fixtures/Configuration';
+        putenv('configurationPath=' . $basePath . 'Tests/Fixtures/Configuration');
 
-        $this->configServiceProphecy->getIndexConfigurations()->willReturn([
-            'testindex' => [
-                'shards' => 4
+        $this->configServiceProphecy->getIndexConfigurations()->willReturn(
+            [
+                'testindex' => [
+                    'shards' => 4,
+                ],
             ]
-        ]);
+        );
         $this->configServiceProphecy->applyMapping('testindex', Argument::any(), Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
         $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);

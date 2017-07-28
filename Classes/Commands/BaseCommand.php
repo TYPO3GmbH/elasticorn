@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace T3G\Elasticorn\Commands;
 
@@ -35,7 +35,7 @@ class BaseCommand extends Command
         $container->setParameter('logger.output', $output);
         $container->setParameter('logger.verbosityMap', $verbosityLevelMap);
         if ($input->hasOption('config-path') && !empty($input->getOption('config-path'))) {
-            $_ENV['configurationPath'] = $input->getOption('config-path');
+            putenv('configurationPath=' . $input->getOption('config-path'));
         }
         if ($input->hasArgument('indexName')) {
             $container->setParameter('index.name', $input->getArgument('indexName'));
@@ -58,10 +58,11 @@ class BaseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        while (!(isset($_ENV['configurationPath']) && file_exists($_ENV['configurationPath']))) {
+        while (!(getenv('configurationPath') && file_exists(getenv('configurationPath')))) {
             $this->askForConfigDir($input, $output);
         }
-        $_ENV['configurationPath'] = rtrim($_ENV['configurationPath'], DIRECTORY_SEPARATOR) . '/';
+        $path = rtrim(getenv('configurationPath'), DIRECTORY_SEPARATOR) . '/';
+        putenv('configurationPath=' . $path);
     }
 
     private function askForConfigDir(InputInterface $input, OutputInterface $output)
@@ -69,6 +70,7 @@ class BaseCommand extends Command
         $helper = $this->getHelper('question');
         $question = new Question('Please enter a valid path to your configuration directory:' . "\n");
 
-        $_ENV['configurationPath'] = $helper->ask($input, $output, $question);
+        $answer = $helper->ask($input, $output, $question);
+        putenv('configurationPath=' . $answer);
     }
 }

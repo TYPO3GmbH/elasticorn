@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace T3G\Elasticorn\Utility;
 
@@ -31,10 +31,10 @@ class ConfigurationParser
      * ConfigurationParser constructor.
      *
      * @param \Psr\Log\LoggerInterface $logger
+     * @param string                   $configPath
      */
     public function __construct(LoggerInterface $logger)
     {
-        $this->configFolder = &$_ENV['configurationPath'];
         $this->logger = $logger;
     }
 
@@ -46,11 +46,12 @@ class ConfigurationParser
     public function getIndexConfigurations(): array
     {
         $indices = [];
-        $this->logger->info('Loading configuration from ' . $this->configFolder);
-        $filesInFolder = $this->getFilesInFolder($this->configFolder);
+        $configPath = getenv('configurationPath');
+        $this->logger->info('Loading configuration from ' . $configPath);
+        $filesInFolder = $this->getFilesInFolder($configPath);
         $this->logger->debug('Found: ' . var_export($filesInFolder, true));
         foreach ($filesInFolder as $indexName) {
-            $subFolder = $this->configFolder . $indexName;
+            $subFolder = $configPath . $indexName;
             if (is_dir($subFolder) === true && file_exists($subFolder . '/' . self::INDEX_CONF_FILENAME)) {
                 $indices[strtolower($indexName)] = $this->getIndexConfiguration($indexName);
             }
@@ -162,7 +163,7 @@ class ConfigurationParser
      */
     private function getFilesInFolder(string $directory): array
     {
-        return array_diff(scandir($directory), ['..', '.']);
+        return array_diff(scandir($directory, 0), ['..', '.']);
     }
 
     /**
@@ -172,7 +173,7 @@ class ConfigurationParser
      */
     private function getIndexDirectory(string $indexName): string
     {
-        $indexDir = $this->configFolder . $indexName;
+        $indexDir = getenv('configurationPath') . $indexName;
         if (!file_exists($indexDir)) {
             throw new \InvalidArgumentException(
                 'Configuration directory ' . $indexDir . ' for index ' . $indexName . ' does not exist.', 666
@@ -212,7 +213,8 @@ class ConfigurationParser
 
     private function createConfigurationDirectories(string $indexName)
     {
-        mkdir($this->configFolder . $indexName);
-        mkdir($this->configFolder . $indexName . '/DocumentTypes');
+        $configPath = getenv('configurationPath');
+        mkdir($configPath . $indexName);
+        mkdir($configPath . $indexName . '/DocumentTypes');
     }
 }
