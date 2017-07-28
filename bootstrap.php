@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 
 use T3G\Elasticorn\Commands\Index\CornifyCommand;
 use T3G\Elasticorn\Commands\Mapping\CompareCommand;
