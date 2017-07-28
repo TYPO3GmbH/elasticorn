@@ -16,7 +16,7 @@ class ConfigurationParserTest extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $_ENV['configurationPath'] = realpath(__DIR__ . '/../../Fixtures/Configuration') . '/';
+        putenv('configurationPath=' . realpath(__DIR__ . '/../../Fixtures/Configuration') . '/');
         $loggerProphecy = $this->prophesize(LoggerInterface::class);
         $this->configurationParser = new ConfigurationParser($loggerProphecy->reveal());
     }

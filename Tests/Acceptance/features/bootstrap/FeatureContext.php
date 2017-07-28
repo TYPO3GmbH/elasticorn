@@ -31,8 +31,7 @@ class FeatureContext implements Context
     public function __construct()
     {
         $this->deleteAllIndices();
-        $_ENV['configurationPath'] = 'Tests/Fixtures/Configuration';
-        putenv('configurationPath=' . $_ENV['configurationPath']);
+        putenv('configurationPath=Tests/Fixtures/Configuration');
     }
 
     /**
@@ -43,7 +42,7 @@ class FeatureContext implements Context
     {
         chdir(__DIR__ . '/../../../../');
 
-        exec('php elasticorn.php -n ' . $command . ' -c ' . $_ENV['configurationPath'] . ' 2>&1', $output);
+        exec('php elasticorn.php -n ' . $command . ' -c ' . getenv('configurationPath') . ' 2>&1', $output);
 
         $this->output = trim(implode("\n", $output));
     }
@@ -72,7 +71,7 @@ class FeatureContext implements Context
     /**
      * @Given /^I have setup mappings and data for index "([^"]*)"$/
      */
-    public function iHaveSetupMappingsAndDataForIndex()
+    public function iHaveSetupMappingsAndDataForIndex(string $indexName)
     {
         // setup footest index with mappings and data
         $this->iCallElasticorn('index:init');
@@ -81,11 +80,11 @@ class FeatureContext implements Context
         $baseIndex = $client->getIndex('footest');
         $mapping = $baseIndex->getMapping();
         foreach ($mapping as $documentType => $properties) {
-            $type = $this->index->getType($documentType);
+            $type = $client->getIndex($indexName)->getType($documentType);
             $mappingConfig = new Mapping($type, $properties['properties']);
             $mappingConfig->send();
         }
-        $this->index->clearCache();
+        $client->getIndex($indexName)->clearCache();
     }
 
     /**
@@ -102,7 +101,7 @@ class FeatureContext implements Context
      */
     public function iShouldHaveAFolderWithTheNewConfiguration($indexName)
     {
-        $folder = $_ENV['configurationPath'] . '/' . $indexName;
+        $folder = getenv('configurationPath') . '/' . $indexName;
         assertTrue(file_exists($folder) && is_dir($folder));
         $this->filesToDelete[] = $folder;
     }
@@ -112,12 +111,12 @@ class FeatureContext implements Context
      */
     public function iShouldHaveDocumentTypesConfigurationFilesFor($indexName)
     {
-        $expected = scandir($_ENV['configurationPath'] . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/', 0);
-        $actual = scandir($_ENV['configurationPath'] . '/' . $indexName . '/DocumentTypes/', 0);
+        $expected = scandir(getenv('configurationPath') . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/', 0);
+        $actual = scandir(getenv('configurationPath') . '/' . $indexName . '/DocumentTypes/', 0);
 
         assertSame($expected, $actual);
 
-        $this->filesToDelete[] = $_ENV['configurationPath'] . '/' . $indexName;
+        $this->filesToDelete[] = getenv('configurationPath') . '/' . $indexName;
     }
 
 
@@ -155,7 +154,7 @@ class FeatureContext implements Context
      */
     public function iUseAlternativeConfigurationFolderWithChanges()
     {
-        $_ENV['configurationPath'] = 'Tests/Fixtures/AlternativeConfiguration';
+        putenv('configurationPath=Tests/Fixtures/AlternativeConfiguration');
     }
 
     public function __destruct()
@@ -171,7 +170,7 @@ class FeatureContext implements Context
      */
     public function iUseAlternativeConfigurationFolderWithChangesAndLanguages()
     {
-        $_ENV['configurationPath'] = 'Tests/Fixtures/AlternativeConfigurationWithLanguages';
+        putenv('configurationPath=Tests/Fixtures/AlternativeConfigurationWithLanguages');
     }
 
     private function getElasticaClient() {

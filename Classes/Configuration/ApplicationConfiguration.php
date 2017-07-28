@@ -17,7 +17,7 @@ final class ApplicationConfiguration
     public static function getElasticornConfiguration() : array
     {
         if (self::$isInitialized === false) {
-            $elasticornConfigPath = $_ENV['configurationPath'] . self::ELASTICORN_CONFIG_FILENAME;
+            $elasticornConfigPath = getenv('configurationPath') . self::ELASTICORN_CONFIG_FILENAME;
             if (file_exists($elasticornConfigPath)) {
                 self::$configuration = Yaml::parse(file_get_contents($elasticornConfigPath));
             }

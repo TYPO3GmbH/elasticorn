@@ -11,6 +11,10 @@
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<directory suffix=".php">../Classes/</directory>
+			<exclude>
+				<directory suffix=".php">../Classes/Bootstrap</directory>
+				<directory suffix=".php">../Classes/Commands</directory>
+			</exclude>
 		</whitelist>
 	</filter>
 </phpunit>
