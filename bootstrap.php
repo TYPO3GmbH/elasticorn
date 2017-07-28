@@ -12,9 +12,9 @@ use T3G\Elasticorn\Commands\Self\UpdateCommand;
 // env config
 // Determine the .env file in package directory ($baseBath === __DIR__) and getcwd()
 // this prevent path errors in case of global composer installation and package requirement
-foreach([$basePath . DIRECTORY_SEPARATOR . '.env', getcwd() . DIRECTORY_SEPARATOR . '.env'] as $file) {
-    if (file_exists($file)) {
-        $dotenv = new Dotenv\Dotenv($basePath);
+foreach([$basePath, getcwd()] as $directory) {
+    if (file_exists($directory . DIRECTORY_SEPARATOR . '.env')) {
+        $dotenv = new Dotenv\Dotenv($directory);
         $dotenv->load();
         break;
     }
