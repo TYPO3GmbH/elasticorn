@@ -14,7 +14,7 @@
     }
   ],
   "require": {
-    "ruflin/elastica": "^3.2",
+    "ruflin/elastica": "~5.0",
     "symfony/yaml": "^3.1",
     "symfony/console": "^3.1",
     "symfony/dependency-injection": "^3.1",

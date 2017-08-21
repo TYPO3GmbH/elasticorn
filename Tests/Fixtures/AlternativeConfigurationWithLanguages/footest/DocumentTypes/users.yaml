@@ -1,16 +1,13 @@
 id:
   type: integer
 username:
-  type: string
-  index: not_analyzed
+  type: keyword
   store: true
 fullname:
-  type: string
-  index: not_analyzed
+  type: keyword
   store: true
 email:
-  type: integer
-  index: not_analyzed
+  type: keyword
   store: true
 avatar:
-  type: string
+  type: text

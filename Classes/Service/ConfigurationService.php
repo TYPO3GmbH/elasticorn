@@ -97,7 +97,8 @@ class ConfigurationService
     {
         $settings = $index->getSettings();
         $mapping = $index->getMapping();
-        $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $settings->get());
+        $cleanSettings = $this->configurationParser->cleanSettingsArray($settings->get());
+        $this->configurationParser->createConfigurationForIndex($indexName, $mapping, $cleanSettings);
     }
 
     /**

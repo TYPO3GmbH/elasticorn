@@ -51,6 +51,26 @@ class ConfigurationParserTest extends TestCase
      * @test
      * @return void
      */
+    public function cleanSettingsRemovesSuperfluousSettings()
+    {
+        $settings = [
+            'creation_date' => '1231231',
+            'number_of_shards' => 5,
+            'number_of_replicas' => 3,
+            'uuid' => '_ao4eu6565',
+        ];
+        $result = $this->configurationParser->cleanSettingsArray($settings);
+
+        self::assertArrayNotHasKey('creation_date', $result);
+        self::assertArrayNotHasKey('uuid', $result);
+        self::assertSame(5, $result['number_of_shards']);
+        self::assertSame(3, $result['number_of_replicas']);
+    }
+
+    /**
+     * @test
+     * @return void
+     */
     public function convertDocumentTypeConfigToElasticaMapping()
     {
         $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations('footest');
