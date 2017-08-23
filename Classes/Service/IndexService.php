@@ -1,10 +1,11 @@
 <?php
-declare (strict_types = 1);
+declare (strict_types=1);
+
 namespace T3G\Elasticorn\Service;
 
 use Elastica\Client;
 use Elastica\Index;
-use Elastica\Tool\CrossIndex;
+use Elastica\Reindex;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Configuration\ApplicationConfiguration;
 
@@ -37,10 +38,10 @@ class IndexService
     /**
      * IndexService constructor.
      *
-     * @param \Elastica\Client $client
+     * @param \Elastica\Client                             $client
      * @param \T3G\Elasticorn\Service\ConfigurationService $configurationService
-     * @param \Psr\Log\LoggerInterface $logger
-     * @param string $indexName
+     * @param \Psr\Log\LoggerInterface                     $logger
+     * @param string                                       $indexName
      */
     public function __construct(
         Client $client,
@@ -74,7 +75,8 @@ class IndexService
     {
         $newIndex = $this->client->getIndex($newName);
         $newIndex->create();
-        CrossIndex::reindex($this->index, $newIndex);
+        $reindex = new Reindex($this->index, $newIndex);
+        $reindex->run();
         $this->index->delete();
     }
 
@@ -112,13 +114,15 @@ class IndexService
     {
         $oldIndex = $this->client->getIndex($oldIndexName);
         $newIndex = $this->client->getIndex($newIndexName);
-        CrossIndex::reindex($oldIndex, $newIndex);
+        $reindex = new Reindex($oldIndex, $newIndex);
+        $reindex->run();
     }
 
     /**
      * Re-apply mappings to all indices found in configuration directory
      *
      * @see remap($indexName)
+     *
      * @param bool $force
      */
     public function remapAll(bool $force = false)
@@ -147,7 +151,8 @@ class IndexService
      * After successfully importing data the alias gets set to the new index
      *
      * @param string $indexName
-     * @param bool $force
+     * @param bool   $force
+     *
      * @throws \InvalidArgumentException
      */
     public function remap(string $indexName, bool $force = false)
@@ -203,7 +208,8 @@ class IndexService
 
             $this->recreateIndex($indexName, $inactiveIndex, $language);
             $this->logger->debug('Reindexing data with new mapping.');
-            CrossIndex::reindex($activeIndex, $inactiveIndex);
+            $reindex = new Reindex($activeIndex, $inactiveIndex);
+            $reindex->run();
             $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
         } else {
             $configuration = $this->configurationService->getIndexConfigurations();
@@ -213,7 +219,7 @@ class IndexService
     }
 
     /**
-     * @param string $indexName
+     * @param string          $indexName
      * @param \Elastica\Index $activeIndex
      * @param \Elastica\Index $inactiveIndex
      */
@@ -226,7 +232,8 @@ class IndexService
 
     /**
      * @param string $indexName
-     * @param array $configuration
+     * @param array  $configuration
+     *
      * @throws \InvalidArgumentException
      */
     private function createIndex(string $indexName, array $configuration)
@@ -260,7 +267,7 @@ class IndexService
 
     /**
      * @param string $indexName
-     * @param array $configuration
+     * @param array  $configuration
      * @param string $language
      */
     private function createSecondaryIndex(string $indexName, array $configuration, string $language = '')
@@ -275,9 +282,9 @@ class IndexService
     }
 
     /**
-     * @param string $indexName
+     * @param string          $indexName
      * @param \Elastica\Index $index
-     * @param $indexConfiguration
+     * @param                 $indexConfiguration
      */
     private function createWithMapping(
         string $indexName,
@@ -292,7 +299,7 @@ class IndexService
 
     /**
      * @param string $indexName
-     * @param Index $index
+     * @param Index  $index
      * @param string $language
      */
     private function recreateIndex(string $indexName, Index $index, string $language)
