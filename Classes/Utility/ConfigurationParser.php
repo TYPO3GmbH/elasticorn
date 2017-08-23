@@ -211,6 +211,26 @@ class ConfigurationParser
         }
     }
 
+    /**
+     * Remove array keys from settings the remote server returns
+     * but we don't want in the config file
+     *
+     * @param array $settings
+     *
+     * @return array
+     */
+    public function cleanSettingsArray(array $settings): array
+    {
+        $unwantedSettings = [
+            'creation_date',
+            'uuid',
+            'version',
+            'provided_name'
+        ];
+        return array_diff_key($settings, array_flip($unwantedSettings));
+
+    }
+
     private function createConfigurationDirectories(string $indexName)
     {
         $configPath = getenv('configurationPath');

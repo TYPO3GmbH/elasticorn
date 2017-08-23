@@ -22,14 +22,14 @@ Feature: Compare mapping
 --- On Server
 +++ In Configuration
 -    [name.analyzer] => english
--    [name.type] => string
+-    [name.type] => text
 +    [name.type] => integer
 
 [info] Document Type "users":
 --- On Server
 +++ In Configuration
 -    [avatar.analyzer] => english
--    [email.type] => string
+-    [email.type] => keyword
 +    [email.type] => integer
 """
 
