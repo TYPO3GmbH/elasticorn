@@ -7,6 +7,12 @@ Elasticorn - PHP based elasticsearch manager
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
 Find the project homepage at http://elasticorn.net/.
 
+Compatibility
+--------------
+
++ Releases 1.x are compatible with elasticsearch 2.x.
++ Releases 5.x are compatible with elasticsearch 5.x.
+
 Features
 --------
 
@@ -141,7 +147,7 @@ elastica.transport=
 elastica.persistent=
 elastica.timeout=
 elastica.username=
-elastica=password=
+elastica.password=
 ~~~
 
 Configuring Languages
