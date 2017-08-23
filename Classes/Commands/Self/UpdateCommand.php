@@ -25,7 +25,7 @@ class UpdateCommand extends Command
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $urlToGithubPagesPharFile = 'https://typo3incteam.github.io/elasticorn/elasticorn.phar';
+        $urlToGithubPagesPharFile = 'https://typo3gmbh.github.io/elasticorn/elasticorn.phar';
         $urlToGithubPagesVersionFile = $urlToGithubPagesPharFile . '.version';
         $updater = new Updater();
         $updater->getStrategy()->setPharUrl($urlToGithubPagesPharFile);
