@@ -25,6 +25,11 @@ class BaseCommand extends Command
      */
     protected $configurationService;
 
+    /**
+     * @var \T3G\Elasticorn\Service\DocumentTypeService
+     */
+    protected $documentTypeService;
+
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         global $container;
@@ -41,6 +46,10 @@ class BaseCommand extends Command
             $container->setParameter('index.name', $input->getArgument('indexName'));
         } else {
             $container->setParameter('index.name', null);
+        }
+        if ($input->hasArgument('documentType')) {
+            $container->setParameter('type.name', $input->getArgument('documentType'));
+            $this->documentTypeService = $container->get('documentTypeService');
         }
         $this->indexService = $container->get('indexService');
         $this->configurationService = $container->get('configurationService');

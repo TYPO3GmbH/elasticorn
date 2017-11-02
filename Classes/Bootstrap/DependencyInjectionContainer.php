@@ -7,6 +7,7 @@ use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use T3G\Elasticorn\Service\ConfigurationService;
+use T3G\Elasticorn\Service\DocumentTypeService;
 use T3G\Elasticorn\Service\IndexService;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 
@@ -44,6 +45,13 @@ class DependencyInjectionContainer
             ->addArgument(new Reference('configurationService'))
             ->addArgument(new Reference('logger'))
             ->addArgument('%index.name%');
+
+        $container
+            ->register('documentTypeService', DocumentTypeService::class)
+            ->addArgument(new Reference('elasticaClient'))
+            ->addArgument(new Reference('logger'))
+            ->addArgument('%index.name%')
+            ->addArgument('%type.name%');
 
         return $container;
     }

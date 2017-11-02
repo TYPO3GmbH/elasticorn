@@ -35,6 +35,33 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given /^I add some documents of type "([^"]*)"$/
+     */
+    public function iAddSomeDocumentsOfType(string $typeName)
+    {
+        $client = $this->getElasticaClient();
+        $id = 1;
+        $tweet = [
+            'id' => $id,
+            'user' => [
+                'name' => 'mewantcookie',
+                'fullName' => 'Cookie Monster'
+            ],
+            'msg' => 'Me wish there were expression for cookies like there is for apples. "A cookie a day make the doctor diagnose you with diabetes" not catchy.',
+            'tstamp' => '1238081389',
+            'location' => '41.12,-71.34'
+        ];
+        $tweetDocument = new \Elastica\Document($id, $tweet);
+        $tweet2 = $tweet;
+        $tweet2['id'] = 2;
+        $tweetDocument2 = new \Elastica\Document(2, $tweet2);
+        $type = $client->getIndex('footest')->getType($typeName);
+        $type->addDocument($tweetDocument);
+        $type->addDocument($tweetDocument2);
+        $type->getIndex()->refresh();
+    }
+
+    /**
      * @When /^I call elasticorn "([^"]*)"$/
      * @param $command
      */
@@ -171,6 +198,15 @@ class FeatureContext implements Context
     public function iUseAlternativeConfigurationFolderWithChangesAndLanguages()
     {
         putenv('configurationPath=Tests/Fixtures/AlternativeConfigurationWithLanguages');
+    }
+
+    /**
+     * @Then /^There should be no documents of type "([^"]*)"$/
+     */
+    public function thereShouldBeNoDocumentsOfType(string $typeName)
+    {
+        $docCount = $this->getElasticaClient()->getIndex('footest')->getType($typeName)->count();
+        assertSame(0, $docCount);
     }
 
     private function getElasticaClient() {
