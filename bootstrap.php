@@ -8,6 +8,7 @@ use T3G\Elasticorn\Commands\Index\RemapCommand;
 use T3G\Elasticorn\Commands\Mapping\ShowCommand;
 use T3G\Elasticorn\Commands\Self\RollbackCommand;
 use T3G\Elasticorn\Commands\Self\UpdateCommand;
+use T3G\Elasticorn\Commands\Type\TruncateCommand;
 
 // env config
 // Determine the .env file in package directory ($baseBath === __DIR__) and getcwd()
@@ -35,6 +36,7 @@ $application->add(new RemapCommand());
 $application->add(new CompareCommand());
 $application->add(new ShowCommand());
 $application->add(new CornifyCommand());
+$application->add(new TruncateCommand());
 
 if (true === $phar) {
     $application->add(new UpdateCommand());
