@@ -4,6 +4,10 @@ CHANGELOG
 Features and Bugfixes per version
 ---------------------------------
 
+### 5.1.0
++ [FEATURE] Add possibility to truncate documents of specified type
++ [BUGFIX] Fix self-update for future versions
+
 ### 5.0.0
 + [FEATURE] Add compatibility to elasticsearch 5
 
