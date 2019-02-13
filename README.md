@@ -134,7 +134,7 @@ You can use a .env file, a command line parameter or the interactive console to 
 
 ### .env configuration
 
-You can specify your configuration directory as well as specific connection params in a .env file which should be 
+You can specify your configuration directory as well as specific connection params in a .env/.env.dist file which should be 
 placed in the folder where elasticorn gets executed. The following variables may be configured:
 
 ~~~
