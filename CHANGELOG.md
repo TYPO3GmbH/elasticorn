@@ -4,6 +4,10 @@ CHANGELOG
 Features and Bugfixes per version
 ---------------------------------
 
+### 5.2.0
++ [TASK] Update Dependencies
++ [FEATURE] Allow .env.dist as base config file
+
 ### 5.1.0
 + [FEATURE] Add possibility to truncate documents of specified type
 + [BUGFIX] Fix self-update for future versions
