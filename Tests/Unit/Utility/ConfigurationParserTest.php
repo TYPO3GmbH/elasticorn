@@ -79,7 +79,7 @@ class ConfigurationParserTest extends TestCase
             'tweets' => [
                 'properties' => [
                     'name' => [
-                        'type' => 'string',
+                        'type' => 'text',
                         'analyzer' => 'english'
                     ]
                 ]
@@ -90,22 +90,19 @@ class ConfigurationParserTest extends TestCase
                         'type' => 'integer'
                     ],
                     'username' => [
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'keyword',
                         'store' => true
                     ],
                     'fullname' => [
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'keyword',
                         'store' => true
                     ],
                     'email' => [
-                        'type' => 'string',
-                        'index' => 'not_analyzed',
+                        'type' => 'keyword',
                         'store' => true
                     ],
                     'avatar' => [
-                        'type' => 'string',
+                        'type' => 'text',
                         'analyzer' => 'english'
                     ]
                 ]
@@ -127,7 +124,7 @@ class ConfigurationParserTest extends TestCase
     {
         $expectedConfig = [
             'name' => [
-                'type' => 'string',
+                'type' => 'text',
                 'analyzer' => 'english'
             ]
         ];
@@ -146,7 +143,7 @@ class ConfigurationParserTest extends TestCase
         $expectedConfig = [
             'tweets' => [
                 'name' => [
-                    'type' => 'string',
+                    'type' => 'text',
                     'analyzer' => 'english'
                 ]
             ],
@@ -155,22 +152,19 @@ class ConfigurationParserTest extends TestCase
                     'type' => 'integer'
                 ],
                 'username' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
+                    'type' => 'keyword',
                     'store' => true
                 ],
                 'fullname' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
+                    'type' => 'keyword',
                     'store' => true
                 ],
                 'email' => [
-                    'type' => 'string',
-                    'index' => 'not_analyzed',
+                    'type' => 'keyword',
                     'store' => true
                 ],
                 'avatar' => [
-                    'type' => 'string',
+                    'type' => 'text',
                     'analyzer' => 'english'
                 ]
             ]

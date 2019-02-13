@@ -71,14 +71,14 @@ class DiffUtilityTest extends TestCase
                     'store' => true,
                 ],
         ];
-        $expected = '
--    [email.type] => integer
-+    [email.type] => string';
+        $expected1 = '-    [email.type] => integer';
+        $expected2 = '+    [email.type] => string';
 
         $diffUtility = new DiffUtility();
         $result = $diffUtility->diff($arr, $arr2);
 
-        self::assertContains($expected, $result);
+        self::assertContains($expected1, $result);
+        self::assertContains($expected2, $result);
     }
 
     /**

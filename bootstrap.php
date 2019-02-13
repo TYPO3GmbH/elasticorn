@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Dotenv\Dotenv;
 use T3G\Elasticorn\Commands\Index\CornifyCommand;
@@ -15,14 +15,16 @@ use T3G\Elasticorn\Commands\Type\TruncateCommand;
 // Determine the .env file in package directory ($baseBath === __DIR__) and getcwd()
 // this prevent path errors in case of global composer installation and package requirement
 foreach ([$basePath, getcwd()] as $directory) {
-    if (file_exists($directory . DIRECTORY_SEPARATOR . '.env.dist')) {
-        $dotenvDist = new Dotenv($directory, '.env.dist');
-        $dotenvDist->load();
-        try {
+    if (file_exists($directory . DIRECTORY_SEPARATOR . '.env.dist') ||
+        file_exists($directory . DIRECTORY_SEPARATOR . '.env')
+    ) {
+        if (file_exists($directory . DIRECTORY_SEPARATOR . '.env.dist')) {
+            $dotenvDist = new Dotenv($directory, '.env.dist');
+            $dotenvDist->load();
+        }
+        if (file_exists($directory . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv($directory, '.env');
             $dotenv->overload();
-        } catch (\Dotenv\Exception\InvalidPathException $e) {
-            // suppressing exception - having .env.dist shall be enough
         }
         break;
     }
