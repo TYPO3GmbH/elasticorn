@@ -26,7 +26,6 @@ foreach ([$basePath, getcwd()] as $directory) {
             $dotenv = new Dotenv($directory, '.env');
             $dotenv->overload();
         }
-        break;
     }
 }
 
