@@ -48,7 +48,7 @@ Installation
 Composer based:
 
 ~~~
-composer require T3G/elasticorn
+composer require t3g/elasticorn
 ~~~
 
 Download as .phar:
