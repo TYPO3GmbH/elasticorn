@@ -59,17 +59,17 @@ class DependencyInjectionContainer
     private function getElasticaConfiguration()
     {
         return array_filter([
-            'host' => getenv('elastica.host'),
-            'port' => getenv('elastica.port'),
-            'path' => getenv('elastica.path'),
-            'url' => getenv('elastica.url'),
-            'proxy' => getenv('elastica.proxy'),
-            'transport' => getenv('elastica.transport'),
-            'persistent' => getenv('elastica.persistent') ?? true,
-            'timeout' => getenv('elastica.timeout'),
+            'host' => getenv('ELASTICA_HOST'),
+            'port' => getenv('ELASTICA_PORT'),
+            'path' => getenv('ELASTICA_PATH'),
+            'url' => getenv('ELASTICA_URL'),
+            'proxy' => getenv('ELASTICA_PROXY'),
+            'transport' => getenv('ELASTICA_TRANSPORT'),
+            'persistent' => getenv('ELASTICA_PERSISTENT') ?? true,
+            'timeout' => getenv('ELASTICA_TIMEOUT'),
             'log' => true,
-            'username' => getenv('elastica.username'),
-            'password' => getenv('elastica.password'),
+            'username' => getenv('ELASTICA_USERNAME'),
+            'password' => getenv('ELASTICA_PASSWORD'),
         ]);
     }
 }

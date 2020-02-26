@@ -1,7 +1,6 @@
 {
   "algorithm": "OPENSSL",
   "compression": "GZ",
-  "chmod": "0755",
   "directories": [
     "Classes"
   ],
@@ -20,8 +19,5 @@
     }
   ],
   "git-version": "package_version",
-  "main": "elasticorn.php",
-  "key": "phar-private-nopassphrase.pem",
-  "output": "elasticorn.phar",
-  "stub": true
+  "key": "phar-private-nopassphrase.pem"
 }

@@ -48,7 +48,7 @@ Installation
 Composer based:
 
 ~~~
-composer require T3G/elasticorn
+composer require t3g/elasticorn
 ~~~
 
 Download as .phar:
@@ -139,15 +139,15 @@ placed in the folder where elasticorn gets executed. The following variables may
 
 ~~~
 configurationPath=
-elastica.host=
-elastica.port=
-elastica.path=
-elastica.url=
-elastica.transport=
-elastica.persistent=
-elastica.timeout=
-elastica.username=
-elastica.password=
+ELASTICA_HOST=
+ELASTICA_PORT=
+ELASTICA_PATH=
+ELASTICA_URL=
+ELASTICA_TRANSPORT=
+ELASTICA_PERSISTENT=
+ELASTICA_TIMEOUT=
+ELASTICA_USERNAME=
+ELASTICA_PASSWORD=
 ~~~
 
 Configuring Languages
