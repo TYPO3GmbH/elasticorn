@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 use Behat\Behat\Context\Context;
 use Elastica\Connection;
-use Elastica\Type\Mapping;
+use Elastica\Mapping;
 
 require_once __DIR__ . '/../../../../vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 
@@ -41,7 +41,7 @@ class FeatureContext implements Context
     public function iAddSomeDocumentsOfType(string $typeName)
     {
         $client = $this->getElasticaClient();
-        $id = 1;
+        $id = '1';
         $tweet = [
             'id' => $id,
             'user' => [
@@ -55,11 +55,11 @@ class FeatureContext implements Context
         $tweetDocument = new \Elastica\Document($id, $tweet);
         $tweet2 = $tweet;
         $tweet2['id'] = 2;
-        $tweetDocument2 = new \Elastica\Document(2, $tweet2);
-        $type = $client->getIndex('footest')->getType($typeName);
-        $type->addDocument($tweetDocument);
-        $type->addDocument($tweetDocument2);
-        $type->getIndex()->refresh();
+        $tweetDocument2 = new \Elastica\Document('2', $tweet2);
+        $index = $client->getIndex('footest');
+        $index->addDocument($tweetDocument);
+        $index->addDocument($tweetDocument2);
+        $index->refresh();
     }
 
     /**
@@ -107,11 +107,11 @@ class FeatureContext implements Context
 
         $baseIndex = $client->getIndex('footest');
         $mapping = $baseIndex->getMapping();
-        foreach ($mapping as $documentType => $properties) {
-            $type = $client->getIndex($indexName)->getType($documentType);
-            $mappingConfig = new Mapping($type, $properties['properties']);
-            $mappingConfig->send();
-        }
+
+        $index = $client->getIndex($indexName);
+        $mappingConfig = new Mapping($mapping['properties']);
+        $mappingConfig->send($index);
+
         $client->getIndex($indexName)->clearCache();
     }
 
@@ -206,7 +206,7 @@ class FeatureContext implements Context
      */
     public function thereShouldBeNoDocumentsOfType(string $typeName)
     {
-        $docCount = $this->getElasticaClient()->getIndex('footest')->getType($typeName)->count();
+        $docCount = $this->getElasticaClient()->getIndex('footest')->count();
         assertSame(0, $docCount);
     }
 

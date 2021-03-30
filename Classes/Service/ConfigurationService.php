@@ -4,7 +4,7 @@ namespace T3G\Elasticorn\Service;
 
 use Elastica\Client;
 use Elastica\Index;
-use Elastica\Type\Mapping;
+use Elastica\Mapping;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 use T3G\Elasticorn\Utility\DiffUtility;
@@ -56,11 +56,8 @@ class ConfigurationService
         $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName, $language);
         $this->logger->debug('Loading mapping for ' . $indexName);
         foreach ($documentTypeConfigurations as $documentType => $configuration) {
-            $type = $index->getType($documentType);
-            $mapping = new Mapping();
-            $mapping->setType($type);
-            $mapping->setProperties($configuration);
-            $mapping->send();
+            $mapping = new Mapping($configuration);
+            $mapping->send($index);
             $this->logger->debug('Applying mapping for ' . $documentType);
         }
     }

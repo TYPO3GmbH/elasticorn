@@ -12,6 +12,7 @@ Compatibility
 
 + Releases 1.x are compatible with elasticsearch 2.x.
 + Releases 5.x are compatible with elasticsearch 5.x.
++ Releases 7.x are compatible with elasticsearch 7.x
 
 Features
 --------

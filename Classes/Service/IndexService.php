@@ -247,7 +247,7 @@ class IndexService
                     $this->createPrimaryIndex($indexName, $configuration, $language);
                     $this->createSecondaryIndex($indexName, $configuration, $language);
                 }
-                $primaryIndex = $this->client->getIndex($indexName . '_' . $languages[0]);
+                $primaryIndex = $this->client->getIndex($indexName . '_' . $languages[0] . '_a');
                 $primaryIndex->addAlias($indexName);
             } else {
                 $this->createPrimaryIndex($indexName, $configuration);
@@ -292,7 +292,7 @@ class IndexService
         array $indexConfiguration,
         string $language = ''
     ) {
-        $index->create($indexConfiguration);
+        $index->create(['settings' => $indexConfiguration]);
         $this->logger->debug('Creating index ' . $indexName);
         $this->configurationService->applyMapping($indexName, $index, $language);
     }
