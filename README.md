@@ -234,5 +234,6 @@ You can run the unit test suite with `bin/phpunit -c Build phpunit.xml`.
 
 > Note: The acceptance tests need a clean elasticsearch instance on localhost:9200 - do not execute these tests
 if you have other indices configured that you still need. The tests delete _all_ indices at various points.
+You can configure host and port used in tests by setting `ELASTICA_HOST` and `ELASTICA_PORT` environmental variables.
 
 You can run the acceptance test suite with `bin/behat -c Tests/Acceptance/behat.yml`.
