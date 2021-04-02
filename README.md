@@ -237,3 +237,10 @@ if you have other indices configured that you still need. The tests delete _all_
 You can configure host and port used in tests by setting `ELASTICA_HOST` and `ELASTICA_PORT` environmental variables. To get a fresh elasticsearch instance up quickly use docker: `docker run --rm -p 9200:9200 elasticsearch:5.6-alpine`
 
 You can run the acceptance test suite with `bin/behat -c Build/behat.yml`.
+
+
+Building the phar
+=================
+
+- Use https://github.com/box-project/box2
+- Run `box compile`

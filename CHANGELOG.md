@@ -4,6 +4,16 @@ CHANGELOG
 Features and Bugfixes per version
 ---------------------------------
 
+### 5.3.1
+- Make ES connection in behat tests configurable via env variables
+- Update README, fix test instructions
+- Remove unused docs folder
+
+### 5.3.0
+- Bump symfony/dependency-injection from 3.4.22 to 3.4.26
+- [TASK] Enable .env.local as last override
+- [BUGFIX] Remove break to load also env files from second directory
+
 ### 5.2.0
 + [TASK] Update Dependencies
 + [FEATURE] Allow .env.dist as base config file
