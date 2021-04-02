@@ -1,8 +1,14 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
 namespace T3G\Elasticorn\Commands\Index;
-
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,16 +17,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
- * Class RemapCommand
+ * Class RemapCommand.
  *
  * Command for applying new mappings to index(es)
- *
- * @package T3G\Elasticorn\Commands
  */
 class RemapCommand extends BaseCommand
 {
     /**
-     * Configure this command
+     * Configure this command.
      *
      * @return void
      */
@@ -42,7 +46,6 @@ class RemapCommand extends BaseCommand
             InputOption::VALUE_NONE,
             'If enabled remapping will be forced, even if there are no changes.'
         );
-
     }
 
     /**
@@ -66,5 +69,4 @@ class RemapCommand extends BaseCommand
             $this->indexService->remapAll($force);
         }
     }
-
 }

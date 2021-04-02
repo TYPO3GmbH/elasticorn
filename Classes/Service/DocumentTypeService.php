@@ -1,8 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
-namespace T3G\Elasticorn\Service;
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
+namespace T3G\Elasticorn\Service;
 
 use Elastica\Client;
 use Elastica\Query;
@@ -33,10 +39,10 @@ class DocumentTypeService
     /**
      * DocumentTypeService constructor.
      *
-     * @param \Elastica\Client $client
+     * @param \Elastica\Client         $client
      * @param \Psr\Log\LoggerInterface $logger
-     * @param string $indexName
-     * @param string $typeName
+     * @param string                   $indexName
+     * @param string                   $typeName
      */
     public function __construct(
         Client $client,
@@ -63,7 +69,6 @@ class DocumentTypeService
                );
                 $index->refresh();
             }
-
         } else {
             $this->client->getIndex($this->indexName)->getType($this->typeName)->deleteByQuery(new Query\MatchAll());
             $this->client->getIndex($this->indexName)->refresh();
