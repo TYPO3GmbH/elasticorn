@@ -5,7 +5,7 @@ Elasticorn - PHP based elasticsearch manager
 [![Build Status](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/build-status/develop)
 
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
-Find the project homepage at http://elasticorn.net/.
+Find the project homepage at https://elasticorn.net/.
 
 Compatibility
 --------------
@@ -228,11 +228,19 @@ Running the tests
 Elasticorn comes with unit and acceptance tests.
 
 #### Unit tests
-You can run the unit test suite with `bin/phpunit -c Build phpunit.xml`.
+You can run the unit test suite with `bin/phpunit -c Build/phpunit.xml`.
 
 #### Acceptance tests
 
 > Note: The acceptance tests need a clean elasticsearch instance on localhost:9200 - do not execute these tests
 if you have other indices configured that you still need. The tests delete _all_ indices at various points.
+You can configure host and port used in tests by setting `ELASTICA_HOST` and `ELASTICA_PORT` environmental variables. To get a fresh elasticsearch instance up quickly use docker: `docker run --rm -p 9200:9200 elasticsearch:5.6-alpine`
 
-You can run the acceptance test suite with `bin/behat -c Tests/Acceptance/behat.yml`.
+You can run the acceptance test suite with `bin/behat -c Build/behat.yml`.
+
+
+Building the phar
+=================
+
+- Use https://github.com/box-project/box2
+- Run `box compile`

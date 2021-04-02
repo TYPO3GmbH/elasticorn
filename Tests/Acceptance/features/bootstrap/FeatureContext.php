@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
 use Behat\Behat\Context\Context;
+use Elastica\Connection;
 use Elastica\Type\Mapping;
 
 require_once __DIR__ . '/../../../../vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
@@ -210,7 +211,11 @@ class FeatureContext implements Context
     }
 
     private function getElasticaClient() {
-        return new \Elastica\Client();
+        $config = [
+            'port' => \getenv('ELASTICA_PORT') ?: Connection::DEFAULT_PORT,
+            'host' => \getenv('ELASTICA_HOST') ?: Connection::DEFAULT_HOST,
+        ];
+        return new \Elastica\Client($config);
     }
 
     private function deleteAllIndices()
