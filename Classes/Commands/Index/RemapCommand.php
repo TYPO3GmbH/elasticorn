@@ -51,10 +51,9 @@ class RemapCommand extends BaseCommand
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
-     *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $force = false;
@@ -68,5 +67,6 @@ class RemapCommand extends BaseCommand
             $output->writeln('Remapping and recreating all configured indices.');
             $this->indexService->remapAll($force);
         }
+        return 0;
     }
 }
