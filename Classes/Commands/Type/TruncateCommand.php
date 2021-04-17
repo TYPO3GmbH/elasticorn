@@ -49,9 +49,11 @@ class TruncateCommand extends BaseCommand
     {
         try {
             $this->documentTypeService->deleteDocumentsOfType();
+
             return 0;
         } catch (\InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+
             return 1;
         }
     }

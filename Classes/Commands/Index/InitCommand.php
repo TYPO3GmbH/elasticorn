@@ -37,6 +37,7 @@ class InitCommand extends BaseCommand
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -46,8 +47,10 @@ class InitCommand extends BaseCommand
             $this->indexService->initIndices();
         } catch (\InvalidArgumentException $e) {
             $output->writeln('<error>' . $e->getMessage() . '</error>');
+
             return 1;
         }
+
         return 0;
     }
 }
