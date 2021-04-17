@@ -1,5 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\Elasticorn\Commands\Self;
 
 use Humbug\SelfUpdate\Updater;
@@ -9,9 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends Command
 {
-
     /**
-     * Configure the update command
+     * Configure the update command.
      *
      * @return void
      */

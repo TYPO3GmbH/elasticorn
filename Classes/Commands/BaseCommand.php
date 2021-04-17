@@ -1,5 +1,12 @@
 <?php
+
 declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
 namespace T3G\Elasticorn\Commands;
 
@@ -14,7 +21,6 @@ use T3G\Elasticorn\Service\IndexService;
 
 class BaseCommand extends Command
 {
-
     /**
      * @var IndexService
      */
@@ -35,7 +41,7 @@ class BaseCommand extends Command
         global $container;
         $verbosityLevelMap = [
             LogLevel::NOTICE => OutputInterface::VERBOSITY_NORMAL,
-            LogLevel::INFO   => OutputInterface::VERBOSITY_NORMAL,
+            LogLevel::INFO => OutputInterface::VERBOSITY_NORMAL,
         ];
         $container->setParameter('logger.output', $output);
         $container->setParameter('logger.verbosityMap', $verbosityLevelMap);

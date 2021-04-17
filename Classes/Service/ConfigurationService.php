@@ -1,17 +1,24 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\Elasticorn\Service;
 
 use Elastica\Client;
 use Elastica\Index;
-use Elastica\Type\Mapping;
+use Elastica\Mapping;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 use T3G\Elasticorn\Utility\DiffUtility;
 
 /**
- * Class ConfigurationService
- *
+ * Class ConfigurationService.
  */
 class ConfigurationService
 {
@@ -33,9 +40,9 @@ class ConfigurationService
     /**
      * ConfigurationService constructor.
      *
-     * @param \Elastica\Client $client
+     * @param \Elastica\Client                            $client
      * @param \T3G\Elasticorn\Utility\ConfigurationParser $configurationParser
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \Psr\Log\LoggerInterface                    $logger
      */
     public function __construct(
         Client $client,
@@ -49,32 +56,30 @@ class ConfigurationService
 
     /**
      * @param string $indexName
-     * @param Index $index
+     * @param Index  $index
      */
     public function applyMapping(string $indexName, Index $index, string $language = '')
     {
         $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName, $language);
         $this->logger->debug('Loading mapping for ' . $indexName);
         foreach ($documentTypeConfigurations as $documentType => $configuration) {
-            $type = $index->getType($documentType);
-            $mapping = new Mapping();
-            $mapping->setType($type);
-            $mapping->setProperties($configuration);
-            $mapping->send();
+            $mapping = new Mapping($configuration);
+            $mapping->send($index);
             $this->logger->debug('Applying mapping for ' . $documentType);
         }
     }
 
     /**
-     * Compare mapping configurations (applied in elasticsearch and configured in file)
+     * Compare mapping configurations (applied in elasticsearch and configured in file).
      *
      * @param string $indexName
-     * @param Index $index
+     * @param Index  $index
+     *
      * @return string
      */
-    public function compareMappingConfiguration(string $indexName, Index $index = null) : string
+    public function compareMappingConfiguration(string $indexName, Index $index = null): string
     {
-        if ($index === null) {
+        if (null === $index) {
             $index = $this->client->getIndex($indexName);
         }
         $mapping = $index->getMapping();
@@ -88,10 +93,10 @@ class ConfigurationService
     }
 
     /**
-     * Creates configuration directories and files from settings and mappings of an existing index
+     * Creates configuration directories and files from settings and mappings of an existing index.
      *
      * @param string $indexName
-     * @param Index $index
+     * @param Index  $index
      */
     public function createConfigurationFromExistingIndex(string $indexName, Index $index)
     {
@@ -106,7 +111,7 @@ class ConfigurationService
      *
      * @return array
      */
-    public function getIndexConfiguration(string $indexName) : array
+    public function getIndexConfiguration(string $indexName): array
     {
         return $this->configurationParser->getIndexConfiguration($indexName);
     }
@@ -114,7 +119,7 @@ class ConfigurationService
     /**
      * @return array
      */
-    public function getIndexConfigurations() : array
+    public function getIndexConfigurations(): array
     {
         return $this->configurationParser->getIndexConfigurations();
     }
@@ -122,9 +127,10 @@ class ConfigurationService
     /**
      * @param $configuration1
      * @param $configuration2
+     *
      * @return string
      */
-    private function compareConfigurations($configuration1, $configuration2) : string
+    private function compareConfigurations($configuration1, $configuration2): string
     {
         $result = '';
         if ($configuration1 === $configuration2) {
@@ -132,15 +138,17 @@ class ConfigurationService
         } else {
             $result = $this->compareDocTypeConfiguration($configuration1, $configuration2);
         }
+
         return $result;
     }
 
     /**
      * @param $configuration1
      * @param $configuration2
+     *
      * @return string
      */
-    private function compareDocTypeConfiguration(array $configuration1, array $configuration2) : string
+    private function compareDocTypeConfiguration(array $configuration1, array $configuration2): string
     {
         $result = '';
         $differ = new DiffUtility();
@@ -162,6 +170,7 @@ class ConfigurationService
                 }
             }
         }
+
         return $result;
     }
 }

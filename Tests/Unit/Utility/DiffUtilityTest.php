@@ -1,71 +1,72 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use T3G\Elasticorn\Utility\DiffUtility;
 
 class DiffUtilityTest extends TestCase
 {
+    use ProphecyTrait;
 
     /**
      * @test
+     *
      * @return void
      */
     public function compareArraysDiffsArraysOrderIndependent()
     {
         $arr = [
-            'id' =>
-                [
+            'id' => [
                     'type' => 'integer',
                 ],
-            'username' =>
-                [
+            'username' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'fullname' =>
-                [
+            'fullname' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'email' =>
-                [
+            'email' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'avatar' =>
-                [
+            'avatar' => [
                     'type' => 'string',
                 ],
         ];
 
         $arr2 = [
-            'avatar' =>
-                [
+            'avatar' => [
                     'type' => 'string',
                 ],
-            'email' =>
-                [
+            'email' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'fullname' =>
-                [
+            'fullname' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'id' =>
-                [
+            'id' => [
                     'type' => 'integer',
                 ],
-            'username' =>
-                [
+            'username' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
@@ -77,41 +78,37 @@ class DiffUtilityTest extends TestCase
         $diffUtility = new DiffUtility();
         $result = $diffUtility->diff($arr, $arr2);
 
-        self::assertContains($expected1, $result);
-        self::assertContains($expected2, $result);
+        self::assertStringContainsString($expected1, $result);
+        self::assertStringContainsString($expected2, $result);
     }
 
     /**
      * @test
+     *
      * @return void
      */
     public function diffWithoutChangesTest()
     {
         $arr = [
-            'id' =>
-                [
+            'id' => [
                     'type' => 'integer',
                 ],
-            'username' =>
-                [
+            'username' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'fullname' =>
-                [
+            'fullname' => [
                     'type' => 'string',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'email' =>
-                [
+            'email' => [
                     'type' => 'integer',
                     'index' => 'not_analyzed',
                     'store' => true,
                 ],
-            'avatar' =>
-                [
+            'avatar' => [
                     'type' => 'string',
                 ],
         ];
