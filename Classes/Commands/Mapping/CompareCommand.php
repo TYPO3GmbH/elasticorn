@@ -43,6 +43,7 @@ class CompareCommand extends BaseCommand
     {
         parent::execute($input, $output);
         $this->configurationService->compareMappingConfiguration($input->getArgument('indexName'), $this->indexService->getIndex());
+
         return 0;
     }
 }

@@ -48,6 +48,7 @@ class ShowCommand extends BaseCommand
         $output->write(
             $dump
         );
+
         return 0;
     }
 }
