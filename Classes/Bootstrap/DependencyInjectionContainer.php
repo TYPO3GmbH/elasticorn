@@ -1,5 +1,13 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\Elasticorn\Bootstrap;
 
 use Elastica\Client;
@@ -13,7 +21,6 @@ use T3G\Elasticorn\Utility\ConfigurationParser;
 
 class DependencyInjectionContainer
 {
-
     public function init()
     {
         $container = new ContainerBuilder();

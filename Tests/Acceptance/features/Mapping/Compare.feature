@@ -8,8 +8,7 @@ Feature: Compare mapping
     When I call elasticorn "mapping:compare footest"
     Then I should see:
   """
-  [info] No difference between configurations of document type "tweets"
-  [info] No difference between configurations of document type "users"
+  [info] No difference between configurations
   """
 
   Scenario: Show configured mapping containing changes
@@ -18,19 +17,9 @@ Feature: Compare mapping
     When I call elasticorn "mapping:compare footest"
     Then I should see:
 """
-[info] Document Type "tweets":
---- On Server
-+++ In Configuration
 -    [name.analyzer] => english
 -    [name.type] => text
 +    [name.type] => integer
-
-[info] Document Type "users":
---- On Server
-+++ In Configuration
--    [avatar.analyzer] => english
--    [email.type] => keyword
-+    [email.type] => integer
 """
 
   Scenario: Get help if argument indexName is missing

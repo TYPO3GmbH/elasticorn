@@ -1,5 +1,12 @@
 <?php
+
 declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
 namespace T3G\Elasticorn\Utility;
 
@@ -7,16 +14,15 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class ConfigurationParser
- *
- * @package T3G\Elasticorn
+ * Class ConfigurationParser.
  */
 class ConfigurationParser
 {
     /**
-     * Name of index configuration file
+     * Name of index configuration file.
      */
     const INDEX_CONF_FILENAME = 'IndexConfiguration.yaml';
+    const MAPPING_FILENAME = '/Mapping.yaml';
 
     /**
      * @var string
@@ -39,7 +45,7 @@ class ConfigurationParser
     }
 
     /**
-     * Get configurations for all indices
+     * Get configurations for all indices.
      *
      * @return array
      */
@@ -52,15 +58,16 @@ class ConfigurationParser
         $this->logger->debug('Found: ' . var_export($filesInFolder, true));
         foreach ($filesInFolder as $indexName) {
             $subFolder = $configPath . $indexName;
-            if (is_dir($subFolder) === true && file_exists($subFolder . '/' . self::INDEX_CONF_FILENAME)) {
+            if (true === is_dir($subFolder) && file_exists($subFolder . '/' . self::INDEX_CONF_FILENAME)) {
                 $indices[strtolower($indexName)] = $this->getIndexConfiguration($indexName);
             }
         }
+
         return $indices;
     }
 
     /**
-     * Get Configuration for specified index1
+     * Get Configuration for specified index1.
      *
      * @param string $indexName
      *
@@ -69,81 +76,50 @@ class ConfigurationParser
     public function getIndexConfiguration(string $indexName): array
     {
         $filePath = $this->getIndexDirectory($indexName) . '/' . self::INDEX_CONF_FILENAME;
-        return $this->getConfig($filePath);
+
+        $config = $this->getConfig($filePath);
+
+        return is_array($config) ? $config : [];
     }
 
     /**
-     * Get all document type configurations for index
+     * Get all document type configurations for index.
      *
      * @param string $indexName
      * @param string $language
      *
      * @return array
      */
-    public function getDocumentTypeConfigurations(string $indexName, string $language = ''): array
+    public function getMapping(string $indexName, string $language = ''): array
     {
-        $configs = [];
-        $directory = $this->getDocumentTypesDirectory($indexName);
-        $configFiles = $this->getFilesInFolder($directory);
-        foreach ($configFiles as $configFile) {
-            $filePath = $directory . $configFile;
-            $pathInfo = pathinfo($filePath);
-            if ($pathInfo['extension'] === 'yaml') {
-                $configs[$pathInfo['filename']] = $this->getConfig($filePath);
-            }
+        $directory = $this->getIndexDirectory($indexName);
+        $filePath = $directory . self::MAPPING_FILENAME;
+        $pathInfo = pathinfo($filePath);
+        if ('yaml' === $pathInfo['extension']) {
+            $mapping = $this->getConfig($filePath);
         }
-        if ($language !== '') {
-            $configs = $this->addAnalyzerToConfig($language, $configs);
+        if ('' !== $language) {
+            $mapping = $this->addAnalyzerToConfig($language, $mapping);
         }
-        return $configs;
-    }
 
-    /**
-     * Convert document type configuration to mapping as returned from elastica (for comparison for example)
-     *
-     * @param array $configurations
-     *
-     * @return array
-     */
-    public function convertDocumentTypeConfigurationToMappingFromElastica(array $configurations): array
-    {
-        $mappings = [];
-        foreach ($configurations as $index => $configuration) {
-            $mappings[$index]['properties'] = $configuration;
-        }
-        return $mappings;
-    }
-
-    /**
-     * Get configuration for document type in index
-     *
-     * @param string $indexName
-     * @param string $documentType
-     *
-     * @return array
-     */
-    public function getDocumentTypeConfiguration(string $indexName, string $documentType): array
-    {
-        $filePath = $this->getDocumentTypesDirectory($indexName) . strtolower($documentType) . '.yaml';
-        return $this->getConfig($filePath);
+        return $mapping;
     }
 
     /**
      * @param string $language
-     * @param        $configs
+     * @param        $mapping
      *
      * @return mixed
      */
-    private function addAnalyzerToConfig(string $language, $configs)
+    private function addAnalyzerToConfig(string $language, $mapping)
     {
-        foreach ($configs as $key => $field) {
-            foreach ($field as $name => $config) {
-                if (array_key_exists('analyzer', $config)) {
-                    $configs[$key][$name]['analyzer'] = $language;
-                }
+        foreach ($mapping as $name => $config) {
+            if (array_key_exists('analyzer', $config)) {
+                $mapping[$name]['analyzer'] = $language;
             }
         }
-        return $configs;
+
+        return $mapping;
     }
 
     /**
@@ -175,18 +151,18 @@ class ConfigurationParser
     {
         $indexDir = getenv('configurationPath') . $indexName;
         if (!file_exists($indexDir)) {
-            throw new \InvalidArgumentException(
-                'Configuration directory ' . $indexDir . ' for index ' . $indexName . ' does not exist.', 666
-            );
+            throw new \InvalidArgumentException('Configuration directory ' . $indexDir . ' for index ' . $indexName . ' does not exist.', 666);
         }
+
         return $indexDir;
     }
 
     /**
      * @param string $filePath
      *
-     * @return array
      * @throws \InvalidArgumentException
+     *
+     * @return array
      */
     private function getConfig(string $filePath): array
     {
@@ -194,26 +170,25 @@ class ConfigurationParser
             throw new \InvalidArgumentException('No configuration found at ' . $filePath, 666);
         }
         $configFileContent = file_get_contents($filePath);
-        return Yaml::parse($configFileContent);
+        $config = Yaml::parse($configFileContent);
+
+        return is_array($config) ? $config : [];
     }
 
     public function createConfigurationForIndex(string $indexName, array $mapping, array $settings)
     {
         $this->createConfigurationDirectories($indexName);
         $indexDirectory = $this->getIndexDirectory($indexName);
-        $documentTypesDirectory = $this->getDocumentTypesDirectory($indexName);
         file_put_contents($indexDirectory . '/IndexConfiguration.yaml', Yaml::dump($settings));
-        foreach ($mapping as $documentType => $mappingConfig) {
-            file_put_contents(
-                $documentTypesDirectory . '/' . $documentType . '.yaml',
-                Yaml::dump($mappingConfig['properties'])
-            );
-        }
+        file_put_contents(
+            $indexDirectory . '/Mapping.yaml',
+            Yaml::dump($mapping['properties'] ?? '')
+        );
     }
 
     /**
      * Remove array keys from settings the remote server returns
-     * but we don't want in the config file
+     * but we don't want in the config file.
      *
      * @param array $settings
      *
@@ -225,16 +200,15 @@ class ConfigurationParser
             'creation_date',
             'uuid',
             'version',
-            'provided_name'
+            'provided_name',
         ];
-        return array_diff_key($settings, array_flip($unwantedSettings));
 
+        return array_diff_key($settings, array_flip($unwantedSettings));
     }
 
     private function createConfigurationDirectories(string $indexName)
     {
         $configPath = getenv('configurationPath');
         mkdir($configPath . $indexName);
-        mkdir($configPath . $indexName . '/DocumentTypes');
     }
 }

@@ -1,12 +1,21 @@
 <?php
+
 declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
 namespace T3G\Elasticorn\Tests\Unit\Utility;
 
 use Elastica\Client;
 use Elastica\Index;
+use Elastica\Response;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Service\ConfigurationService;
@@ -15,6 +24,8 @@ use T3G\Elasticorn\Utility\ConfigurationParser;
 
 class IndexServiceTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var IndexService
      */
@@ -43,7 +54,7 @@ class IndexServiceTest extends TestCase
     /**
      * @return void
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->clientProphecy = $this->prophesize(Client::class);
         $this->configParserProphecy = $this->prophesize(ConfigurationParser::class);
@@ -59,6 +70,7 @@ class IndexServiceTest extends TestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function initIndicesCreatesIndices()
@@ -77,16 +89,16 @@ class IndexServiceTest extends TestCase
         );
         $this->configServiceProphecy->applyMapping('testindex', Argument::any(), Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
-        $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
+        $this->configParserProphecy->getMapping(Argument::any())->willReturn([]);
         $indexProphecy->exists()->willReturn(false);
-        $indexProphecy->create(Argument::any())->willReturn();
-        $indexProphecy->addAlias(Argument::any())->willReturn();
+        $indexProphecy->create(Argument::any())->willReturn(new Response(''));
+        $indexProphecy->addAlias(Argument::any())->willReturn(new Response(''));
 
         $this->indexService->initIndices();
 
         $this->clientProphecy->getIndex('testindex_a')->shouldHaveBeenCalled();
         $this->clientProphecy->getIndex('testindex_b')->shouldHaveBeenCalled();
-        $indexProphecy->create(['shards' => 4])->shouldHaveBeenCalled();
+        $indexProphecy->create(['settings' => ['shards' => 4]])->shouldHaveBeenCalled();
         $indexProphecy->addAlias('testindex')->shouldHaveBeenCalled();
     }
 }

@@ -11,7 +11,7 @@ composer.phar
 /.env
 /bin/
 /phar-private.pem.passphrase-protected
-/phar-private.pem
+/phar.pem
 /phar-private-nopassphrase.pem
 /elasticorn.phar.pubkey
 /elasticorn.phar
@@ -20,3 +20,7 @@ composer.phar
 /elasticorn-old.phar
 /elasticorn-old.phar.pubkey
 /.TestClient/
+.php_cs.cache
+build/.phpunit.result.cache
+Tests/Fixtures/Configuration/mysuperindex/
+var/

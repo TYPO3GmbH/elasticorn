@@ -1,7 +1,14 @@
 <?php
-declare(strict_types = 1);
-namespace T3G\Elasticorn\Commands\Index;
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+namespace T3G\Elasticorn\Commands\Index;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,17 +17,14 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
- * Class CornifyCommand
+ * Class CornifyCommand.
  *
  * Converts an existing index with mapping configuration and data to an elasticorn index
- *
- * @package T3G\Elasticorn\Commands\Index
  */
 class CornifyCommand extends BaseCommand
 {
-
     /**
-     * Configure the cornify command
+     * Configure the cornify command.
      *
      * @return void
      */
@@ -35,9 +39,10 @@ class CornifyCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return int|null|void
+     *
+     * @return int|void|null
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -48,7 +53,7 @@ class CornifyCommand extends BaseCommand
         try {
             $continue = $this->compareConfiguration($input, $output, $helper, $indexName);
         } catch (\InvalidArgumentException $e) {
-            if ($e->getCode() === 666) {
+            if (666 === $e->getCode()) {
                 $continue = $this->createConfiguration($input, $output, $helper, $indexName);
             }
         }
@@ -62,10 +67,11 @@ class CornifyCommand extends BaseCommand
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param $helper
      * @param $indexName
+     *
      * @return bool
      */
     private function createConfiguration(InputInterface $input, OutputInterface $output, $helper, $indexName)
@@ -73,16 +79,19 @@ class CornifyCommand extends BaseCommand
         $question = new ConfirmationQuestion('Configuration does not exist. Shall I create it? [Y/n]', true);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('Cannot continue without configuration.');
+
             return false;
         }
         $this->configurationService->createConfigurationFromExistingIndex($indexName, $this->indexService->getIndex());
+
         return true;
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
+     * @param \Symfony\Component\Console\Input\InputInterface   $input
      * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @param $helper
+     *
      * @return bool
      */
     private function compareConfiguration(InputInterface $input, OutputInterface $output, $helper, $indexName)
@@ -91,6 +100,7 @@ class CornifyCommand extends BaseCommand
         $question = new ConfirmationQuestion('Continue? [Y/n]', true);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln('User aborted.');
+
             return false;
         } else {
             return true;

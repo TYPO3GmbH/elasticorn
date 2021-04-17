@@ -2,7 +2,7 @@ Elasticorn - PHP based elasticsearch manager
 =============================================
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/?branch=develop)
-[![Build Status](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/build-status/develop)
+[![build Status](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/build-status/develop)
 
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
 Find the project homepage at https://elasticorn.net/.
@@ -12,6 +12,7 @@ Compatibility
 
 + Releases 1.x are compatible with elasticsearch 2.x.
 + Releases 5.x are compatible with elasticsearch 5.x.
++ Releases 7.x are compatible with elasticsearch 7.x
 
 Features
 --------
@@ -75,9 +76,8 @@ For elasticorn to work, your configuration needs to be structured in the followi
 - MAIN configuration directory
   - Elasticorn.yaml*
   - IndexName directory
-    - IndexConfiguration.yaml
-    - DocumentTypes directory
-      - documenttype.yaml (for example: tweets.yaml)
+    - IndexConfiguration.yaml (Containing index settings)
+    - Mapping.yaml (Containing mapping configuration)
 ~~~
 \* optional
 
@@ -87,12 +87,15 @@ For elasticorn to work, your configuration needs to be structured in the followi
 project
 │   README.md    
 └───Elasticorn
-	└── t3_forger
-    		├── DocumentTypes
-    		│   ├── issue.yaml
-    		│   ├── review.yaml
-    		│   └── user.yaml
+	└── t3_forger_issue
+    		├── Mapping.yaml
     		└── IndexConfiguration.yaml
+	└── t3_forger_review
+    		├── Mapping.yaml
+    		└── IndexConfiguration.yaml
+    └── t3_forger_user
+        ├── Mapping.yaml
+        └── IndexConfiguration.yaml
 ~~~
 
 In our case the `Elasticorn` holds all information about our indices. Multiple indices can be managed by
@@ -100,13 +103,11 @@ creating new folders.
 
 The `IndexConfiguration.yaml` file specifies configuration parameters for the index (for example shards or replicas.)
 
-The folder called `DocumentTypes` holds our type mapping with a file per document type.
+The file called `Mapping.yaml` holds our type mapping.
 
 The syntax is pretty straightforward yaml syntax which will then be parsed as an array.
 
-The filename will determine the name of your document type in Elasticsearch.
-
-We'll take a look at `user.yaml` here:
+We'll take a look at `Mapping.yaml` here:
 
 ~~~
 id:
@@ -130,7 +131,7 @@ avatar:
 For an example on how the configuration should look like, see the Tests/Fixtures/Configuration folder in this project.
 For a list of available configuration options see the elastica documentation.
 
-You can use a .env file, a command line parameter or the interactive console to specify your configuration directory.
+You can use a `.env` file, a command line parameter or the interactive console to specify your configuration directory.
 
 ### .env configuration
 
@@ -228,7 +229,7 @@ Running the tests
 Elasticorn comes with unit and acceptance tests.
 
 #### Unit tests
-You can run the unit test suite with `bin/phpunit -c Build/phpunit.xml`.
+You can run the unit test suite with `bin/phpunit -c build/phpunit.xml`.
 
 #### Acceptance tests
 
@@ -236,7 +237,7 @@ You can run the unit test suite with `bin/phpunit -c Build/phpunit.xml`.
 if you have other indices configured that you still need. The tests delete _all_ indices at various points.
 You can configure host and port used in tests by setting `ELASTICA_HOST` and `ELASTICA_PORT` environmental variables. To get a fresh elasticsearch instance up quickly use docker: `docker run --rm -p 9200:9200 elasticsearch:5.6-alpine`
 
-You can run the acceptance test suite with `bin/behat -c Build/behat.yml`.
+You can run the acceptance test suite with `bin/behat -c build/behat.yml`.
 
 
 Building the phar

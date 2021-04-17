@@ -1,14 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 use Dotenv\Dotenv;
+use SelfUpdate\SelfUpdateCommand;
 use T3G\Elasticorn\Commands\Index\CornifyCommand;
-use T3G\Elasticorn\Commands\Mapping\CompareCommand;
 use T3G\Elasticorn\Commands\Index\InitCommand;
 use T3G\Elasticorn\Commands\Index\RemapCommand;
+use T3G\Elasticorn\Commands\Mapping\CompareCommand;
 use T3G\Elasticorn\Commands\Mapping\ShowCommand;
-use T3G\Elasticorn\Commands\Self\RollbackCommand;
-use T3G\Elasticorn\Commands\Self\UpdateCommand;
 use T3G\Elasticorn\Commands\Type\TruncateCommand;
 
 // env config
@@ -34,7 +40,6 @@ $di = new \T3G\Elasticorn\Bootstrap\DependencyInjectionContainer();
 $container = $di->init();
 unset($di);
 
-
 // application
 $application = new \Symfony\Component\Console\Application();
 
@@ -47,10 +52,8 @@ $application->add(new CornifyCommand());
 $application->add(new TruncateCommand());
 
 if (true === $phar) {
-    $application->add(new UpdateCommand());
-    $application->add(new RollbackCommand());
+    $application->add(new SelfUpdateCommand('Elasticorn', '7.0.0', 'TYPO3GmbH/elasticorn'));
 }
-
 
 $application->setName(
     <<<ASCIIART

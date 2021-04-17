@@ -1,5 +1,12 @@
 <?php
-declare (strict_types=1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
 
 namespace T3G\Elasticorn\Service;
 
@@ -10,8 +17,7 @@ use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Configuration\ApplicationConfiguration;
 
 /**
- * Class IndexService
- *
+ * Class IndexService.
  */
 class IndexService
 {
@@ -67,7 +73,7 @@ class IndexService
 
     /**
      * Rename an index (creates new index with data from old)
-     * CAUTION: All mappings are lost, only data is preserved
+     * CAUTION: All mappings are lost, only data is preserved.
      *
      * @param string $newName
      */
@@ -75,6 +81,7 @@ class IndexService
     {
         $newIndex = $this->client->getIndex($newName);
         $newIndex->create();
+        $this->logger->debug('Renaming index for reindexing of data: ' . $newName);
         $reindex = new Reindex($this->index, $newIndex);
         $reindex->run();
         $this->index->delete();
@@ -82,7 +89,7 @@ class IndexService
 
     /**
      * Add all indices found in configuration directory
-     * Creates indices with suffixes _a and _b and adds an alias as indexName
+     * Creates indices with suffixes _a and _b and adds an alias as indexName.
      */
     public function initIndices()
     {
@@ -93,7 +100,7 @@ class IndexService
     }
 
     /**
-     * Initializes a single index from config files
+     * Initializes a single index from config files.
      *
      * @param string $indexName
      */
@@ -105,7 +112,7 @@ class IndexService
     }
 
     /**
-     * Copy data from oldIndexName to newIndexName
+     * Copy data from oldIndexName to newIndexName.
      *
      * @param string $oldIndexName
      * @param string $newIndexName
@@ -119,7 +126,7 @@ class IndexService
     }
 
     /**
-     * Re-apply mappings to all indices found in configuration directory
+     * Re-apply mappings to all indices found in configuration directory.
      *
      * @see remap($indexName)
      *
@@ -140,12 +147,12 @@ class IndexService
     public function getMappingForIndex()
     {
         $this->logger->debug('Get current mapping for ' . $this->index->getName());
+
         return $this->index->getMapping();
     }
 
-
     /**
-     * Remap an index
+     * Remap an index.
      *
      * Drops and recreates the current inactive index, applies mappings and imports data from active index
      * After successfully importing data the alias gets set to the new index
@@ -157,9 +164,10 @@ class IndexService
      */
     public function remap(string $indexName, bool $force = false)
     {
-        if ($this->configurationService->compareMappingConfiguration($indexName) === '') {
+        if ('' === $this->configurationService->compareMappingConfiguration($indexName)) {
             if (false === $force) {
                 $this->logger->info('No difference between configurations, no remapping done');
+
                 return;
             } else {
                 $this->logger->info('No difference between configurations but force given, remapping anyway.');
@@ -213,8 +221,8 @@ class IndexService
             $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
         } else {
             $configuration = $this->configurationService->getIndexConfigurations();
-            $this->createPrimaryIndex($indexName, $configuration, $language);
-            $this->createSecondaryIndex($indexName, $configuration, $language);
+            $this->createPrimaryIndex($indexName, $configuration[$indexName], $language);
+            $this->createSecondaryIndex($indexName, $configuration[$indexName], $language);
         }
     }
 
@@ -247,7 +255,7 @@ class IndexService
                     $this->createPrimaryIndex($indexName, $configuration, $language);
                     $this->createSecondaryIndex($indexName, $configuration, $language);
                 }
-                $primaryIndex = $this->client->getIndex($indexName . '_' . $languages[0]);
+                $primaryIndex = $this->client->getIndex($indexName . '_' . $languages[0] . '_a');
                 $primaryIndex->addAlias($indexName);
             } else {
                 $this->createPrimaryIndex($indexName, $configuration);
@@ -292,7 +300,7 @@ class IndexService
         array $indexConfiguration,
         string $language = ''
     ) {
-        $index->create($indexConfiguration);
+        $index->create(['settings' => $indexConfiguration]);
         $this->logger->debug('Creating index ' . $indexName);
         $this->configurationService->applyMapping($indexName, $index, $language);
     }

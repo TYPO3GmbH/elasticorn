@@ -1,8 +1,20 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 use Behat\Behat\Context\Context;
+use Elastica\Client;
 use Elastica\Connection;
-use Elastica\Type\Mapping;
+use Elastica\Index;
+use Elastica\Mapping;
+use function PHPUnit\Framework\assertStringContainsString;
+use function PHPUnit\Framework\assertTrue;
 
 require_once __DIR__ . '/../../../../vendor/phpunit/phpunit/src/Framework/Assert/Functions.php';
 
@@ -18,7 +30,7 @@ class FeatureContext implements Context
     private $filesToDelete = [];
 
     /**
-     * @var \Elastica\Index
+     * @var Index
      */
     private $index;
 
@@ -36,34 +48,8 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given /^I add some documents of type "([^"]*)"$/
-     */
-    public function iAddSomeDocumentsOfType(string $typeName)
-    {
-        $client = $this->getElasticaClient();
-        $id = 1;
-        $tweet = [
-            'id' => $id,
-            'user' => [
-                'name' => 'mewantcookie',
-                'fullName' => 'Cookie Monster'
-            ],
-            'msg' => 'Me wish there were expression for cookies like there is for apples. "A cookie a day make the doctor diagnose you with diabetes" not catchy.',
-            'tstamp' => '1238081389',
-            'location' => '41.12,-71.34'
-        ];
-        $tweetDocument = new \Elastica\Document($id, $tweet);
-        $tweet2 = $tweet;
-        $tweet2['id'] = 2;
-        $tweetDocument2 = new \Elastica\Document(2, $tweet2);
-        $type = $client->getIndex('footest')->getType($typeName);
-        $type->addDocument($tweetDocument);
-        $type->addDocument($tweetDocument2);
-        $type->getIndex()->refresh();
-    }
-
-    /**
      * @When /^I call elasticorn "([^"]*)"$/
+     *
      * @param $command
      */
     public function iCallElasticorn($command)
@@ -82,8 +68,6 @@ class FeatureContext implements Context
     {
         $this->deleteAllIndices();
     }
-
-
 
     /**
      * @Given /^I have a non\-elasticorn index "([^"]*)"$/
@@ -107,11 +91,11 @@ class FeatureContext implements Context
 
         $baseIndex = $client->getIndex('footest');
         $mapping = $baseIndex->getMapping();
-        foreach ($mapping as $documentType => $properties) {
-            $type = $client->getIndex($indexName)->getType($documentType);
-            $mappingConfig = new Mapping($type, $properties['properties']);
-            $mappingConfig->send();
-        }
+
+        $index = $client->getIndex($indexName);
+        $mappingConfig = new Mapping($mapping['properties']);
+        $mappingConfig->send($index);
+
         $client->getIndex($indexName)->clearCache();
     }
 
@@ -125,6 +109,7 @@ class FeatureContext implements Context
 
     /**
      * @Given /^I should have a folder with the new "([^"]*)" configuration$/
+     *
      * @param string $indexName
      */
     public function iShouldHaveAFolderWithTheNewConfiguration($indexName)
@@ -135,18 +120,14 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^I should have document types configuration files for "([^"]*)"$/
+     * @Then /^I should have a mapping file for "([^"]*)"$/
      */
-    public function iShouldHaveDocumentTypesConfigurationFilesFor($indexName)
+    public function iShouldHaveMappingConfigurationFor($indexName)
     {
-        $expected = scandir(getenv('configurationPath') . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/', 0);
-        $actual = scandir(getenv('configurationPath') . '/' . $indexName . '/DocumentTypes/', 0);
-
-        assertSame($expected, $actual);
+        assertTrue(file_exists(getenv('configurationPath') . '/' . $indexName . '/Mapping.yaml'));
 
         $this->filesToDelete[] = getenv('configurationPath') . '/' . $indexName;
     }
-
 
     /**
      * @Given /^I should have indices starting with "([^"]*)" and a corresponding alias$/
@@ -155,7 +136,7 @@ class FeatureContext implements Context
     {
         $client = $this->getElasticaClient();
         $request = $client->request('_cat/indices?v')->getData();
-        assertContains($indexName, $request['message']);
+        assertStringContainsString($indexName, $request['message']);
         $index = $client->getIndex($indexName);
         assertTrue($index->exists());
     }
@@ -166,7 +147,7 @@ class FeatureContext implements Context
      */
     public function iShouldSee($expected)
     {
-        assertEquals((string)$expected, $this->output);
+        assertStringContainsString((string) $expected, $this->output);
     }
 
     /**
@@ -174,7 +155,7 @@ class FeatureContext implements Context
      */
     public function iShouldSeeMessageContaining($expected)
     {
-        assertContains($expected, $this->output);
+        assertStringContainsString($expected, $this->output);
     }
 
     /**
@@ -187,7 +168,7 @@ class FeatureContext implements Context
 
     public function __destruct()
     {
-        $this->deleteAllIndices();
+        //$this->deleteAllIndices();
         foreach ($this->filesToDelete as $file) {
             $this->rrmdir($file);
         }
@@ -201,21 +182,14 @@ class FeatureContext implements Context
         putenv('configurationPath=Tests/Fixtures/AlternativeConfigurationWithLanguages');
     }
 
-    /**
-     * @Then /^There should be no documents of type "([^"]*)"$/
-     */
-    public function thereShouldBeNoDocumentsOfType(string $typeName)
+    private function getElasticaClient()
     {
-        $docCount = $this->getElasticaClient()->getIndex('footest')->getType($typeName)->count();
-        assertSame(0, $docCount);
-    }
-
-    private function getElasticaClient() {
         $config = [
-            'port' => \getenv('ELASTICA_PORT') ?: Connection::DEFAULT_PORT,
-            'host' => \getenv('ELASTICA_HOST') ?: Connection::DEFAULT_HOST,
+            'port' => getenv('ELASTICA_PORT') ?: Connection::DEFAULT_PORT,
+            'host' => getenv('ELASTICA_HOST') ?: Connection::DEFAULT_HOST,
         ];
-        return new \Elastica\Client($config);
+
+        return new Client($config);
     }
 
     private function deleteAllIndices()
@@ -230,7 +204,7 @@ class FeatureContext implements Context
         if (is_dir($dir)) {
             $objects = scandir($dir, 0);
             foreach ($objects as $object) {
-                if ($object !== '.' && $object !== '..') {
+                if ('.' !== $object && '..' !== $object) {
                     if (is_dir($dir . '/' . $object)) {
                         $this->rrmdir($dir . '/' . $object);
                     } else {
@@ -241,5 +215,4 @@ class FeatureContext implements Context
             rmdir($dir);
         }
     }
-
 }

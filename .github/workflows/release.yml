@@ -1,0 +1,63 @@
+name: Releases
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: intl, zip, zlib
+          ini-values: memory_limit=1G, phar.readonly=0
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install
+        run: |
+          composer install --no-progress --no-suggest --no-interaction
+        env:
+          COMPOSER_AUTH: '{
+            "http-basic": {
+              "repo.packagist.com": {
+                "username": "token",
+                "password": "${{ secrets.PACKAGIST_AUTH_TOKEN }}"
+              }
+            },
+            "github-oauth": {
+              "github.com": "${{ secrets.ACTIONS_TOKEN }}"
+            }
+          }'
+
+      - name: Box
+        run: |
+          echo "${{ secrets.PHAR_SIGNING_KEY }}" >> phar.pem
+          composer global config minimum-stability dev
+          composer global require humbug/box
+          box validate || exit 1
+          box compile  || exit 1
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            elasticorn.phar
+            elasticorn.phar.pubkey
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

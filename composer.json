@@ -14,19 +14,42 @@
     }
   ],
   "require": {
-    "php": "^7.2 || ^7.3 || ^7.4",
-    "ruflin/elastica": "~5.0",
-    "symfony/yaml": "^3.1",
-    "symfony/console": "^3.1",
-    "symfony/dependency-injection": "^3.1",
-    "sebastian/diff": "^1.4",
+    "php": "^7.4 || ^8.0",
+    "ruflin/elastica": "^7.1",
+    "symfony/yaml": "^5.0",
+    "symfony/console": "^5.0",
+    "symfony/dependency-injection": "^5.0",
+    "sebastian/diff": "^4.0",
     "vlucas/phpdotenv": "^2.3",
-    "padraic/phar-updater": "^1.0"
+    "consolidation/self-update": "^1.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
-    "phpunit/phpunit": "^5.5.0",
-    "behat/behat": "^3.1"
+    "friendsofphp/php-cs-fixer": "^2.16",
+    "phpunit/phpunit": "^9.3",
+    "behat/behat": "^3.1",
+    "phpspec/prophecy-phpunit": "^2.0"
+  },
+  "scripts": {
+    "t3g:cgl": [
+      "php-cs-fixer fix --config build/.php_cs.dist -v --dry-run"
+    ],
+    "t3g:cgl:fix": [
+      "php-cs-fixer fix --config build/.php_cs.dist"
+    ],
+    "t3g:test:php": [
+      "Composer\\Config::disableProcessTimeout", "@t3g:test:php:unit"
+    ],
+    "t3g:test:php:cover": [
+      "Composer\\Config::disableProcessTimeout", "mkdir -p var/log/junit/ && phpunit -c build/phpunit.xml --log-junit var/log/junit/phpunit.xml --coverage-clover var/log/junit/coverage.xml"
+    ],
+    "t3g:test:php:cover:html": [
+      "Composer\\Config::disableProcessTimeout",
+      "mkdir -p var/log/junit/ && phpunit -c build/phpunit.xml --log-junit var/log/junit/phpunit.xml --coverage-clover var/log/junit/coverage.xml --coverage-html var/log/junit/coverage/"
+    ],
+    "t3g:test:php:unit": [
+      "mkdir -p var/log/junit/ && phpunit -c build/phpunit.xml --log-junit var/log/junit/phpunit-unit.xml"
+    ]
   },
   "autoload": {
     "psr-4": {

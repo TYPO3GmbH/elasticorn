@@ -1,0 +1,77 @@
+name: CI
+
+on: [push]
+
+jobs:
+  ci:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php-versions: ['7.4', '8.0']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP ${{ matrix.php-versions }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          coverage: pcov
+
+      - name: Show PHP version
+        run: php -v
+
+      - name: Show composer version
+        run: composer --version
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install
+        run: |
+          composer install --no-progress --no-suggest --no-interaction
+        env:
+          COMPOSER_AUTH: '{
+            "http-basic": {
+              "repo.packagist.com": {
+                "username": "token",
+                "password": "${{ secrets.PACKAGIST_AUTH_TOKEN }}"
+              }
+            },
+            "github-oauth": {
+              "github.com": "${{ secrets.ACTIONS_TOKEN }}"
+            }
+          }'
+
+      - name: CGL
+        run: |
+          composer t3g:cgl
+        env:
+          COMPOSER_PROCESS_TIMEOUT: 1200
+
+      - name: Unit Tests
+        run: |
+          php -dpcov.enabled=1 -dpcov.directory="Classes/" ./bin/phpunit -c build/phpunit.xml --log-junit var/log/junit/phpunit-src.xml --coverage-clover var/log/junit/coverage-src.xml
+        env:
+          COMPOSER_PROCESS_TIMEOUT: 1200
+
+      - name: Upload coverage results to Coveralls
+        continue-on-error: true
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          composer global require twinh/php-coveralls --no-progress --no-suggest --no-interaction
+          /home/runner/.composer/vendor/bin/php-coveralls -c build/.coveralls.yml -vvv --json_path=var/log/coveralls-upload.json
+
+

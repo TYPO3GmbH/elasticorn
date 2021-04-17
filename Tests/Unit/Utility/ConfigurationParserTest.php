@@ -1,19 +1,30 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
 namespace T3G\Elasticorn\Tests\Unit;
 
 use PHPUnit\Framework\TestCase;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
 use T3G\Elasticorn\Utility\ConfigurationParser;
 
 class ConfigurationParserTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var ConfigurationParser
      */
     protected $configurationParser;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         putenv('configurationPath=' . realpath(__DIR__ . '/../../Fixtures/Configuration') . '/');
@@ -25,7 +36,7 @@ class ConfigurationParserTest extends TestCase
     {
         $expectedConfig = [
             'number_of_shards' => 4,
-            'number_of_replicas' => 1
+            'number_of_replicas' => 1,
         ];
 
         $config = $this->configurationParser->getIndexConfiguration('footest');
@@ -38,8 +49,8 @@ class ConfigurationParserTest extends TestCase
         $expectedConfig = [
             'footest' => [
                 'number_of_shards' => 4,
-                'number_of_replicas' => 1
-            ]
+                'number_of_replicas' => 1,
+            ],
         ];
 
         $config = $this->configurationParser->getIndexConfigurations();
@@ -49,6 +60,7 @@ class ConfigurationParserTest extends TestCase
 
     /**
      * @test
+     *
      * @return void
      */
     public function cleanSettingsRemovesSuperfluousSettings()
@@ -65,113 +77,5 @@ class ConfigurationParserTest extends TestCase
         self::assertArrayNotHasKey('uuid', $result);
         self::assertSame(5, $result['number_of_shards']);
         self::assertSame(3, $result['number_of_replicas']);
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function convertDocumentTypeConfigToElasticaMapping()
-    {
-        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations('footest');
-
-        $expected = [
-            'tweets' => [
-                'properties' => [
-                    'name' => [
-                        'type' => 'text',
-                        'analyzer' => 'english'
-                    ]
-                ]
-            ],
-            'users' => [
-                'properties' => [
-                    'id' => [
-                        'type' => 'integer'
-                    ],
-                    'username' => [
-                        'type' => 'keyword',
-                        'store' => true
-                    ],
-                    'fullname' => [
-                        'type' => 'keyword',
-                        'store' => true
-                    ],
-                    'email' => [
-                        'type' => 'keyword',
-                        'store' => true
-                    ],
-                    'avatar' => [
-                        'type' => 'text',
-                        'analyzer' => 'english'
-                    ]
-                ]
-            ],
-        ];
-
-        $converted = $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
-            $documentTypeConfigurations
-        );
-
-        self::assertSame($expected, $converted);
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function testGetDocumentTypeConfigFetchesConfigurationBasedOnIndexAndDocumentType()
-    {
-        $expectedConfig = [
-            'name' => [
-                'type' => 'text',
-                'analyzer' => 'english'
-            ]
-        ];
-
-        $config = $this->configurationParser->getDocumentTypeConfiguration('footest', 'tweets');
-
-        self::assertSame($expectedConfig, $config);
-    }
-
-    /**
-     * @test
-     * @return void
-     */
-    public function testGetDocumentTypeConfigurationsFetchesAllConfigsBasedOnIndex()
-    {
-        $expectedConfig = [
-            'tweets' => [
-                'name' => [
-                    'type' => 'text',
-                    'analyzer' => 'english'
-                ]
-            ],
-            'users' => [
-                'id' => [
-                    'type' => 'integer'
-                ],
-                'username' => [
-                    'type' => 'keyword',
-                    'store' => true
-                ],
-                'fullname' => [
-                    'type' => 'keyword',
-                    'store' => true
-                ],
-                'email' => [
-                    'type' => 'keyword',
-                    'store' => true
-                ],
-                'avatar' => [
-                    'type' => 'text',
-                    'analyzer' => 'english'
-                ]
-            ]
-        ];
-
-        $config = $this->configurationParser->getDocumentTypeConfigurations('footest');
-
-        self::assertSame($expectedConfig, $config);
     }
 }

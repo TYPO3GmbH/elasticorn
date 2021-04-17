@@ -1,23 +1,28 @@
 <?php
-declare(strict_types = 1);
-namespace T3G\Elasticorn\Commands\Index;
 
+declare(strict_types=1);
+
+/*
+ * This file is part of the package t3g/elasticorn.
+ * For the full copyright and license information, please read the
+ * LICENSE file that was distributed with this source code.
+ */
+
+namespace T3G\Elasticorn\Commands\Index;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use T3G\Elasticorn\Commands\BaseCommand;
 
 /**
- * Class InitCommand
+ * Class InitCommand.
  *
  * Command to initialize Elastic index(es)
- *
- * @package T3G\Elasticorn\Commands
  */
 class InitCommand extends BaseCommand
 {
     /**
-     * Configure the init command
+     * Configure the init command.
      *
      * @return void
      */
@@ -30,8 +35,9 @@ class InitCommand extends BaseCommand
     }
 
     /**
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -43,5 +49,4 @@ class InitCommand extends BaseCommand
             $output->writeln('<error>' . $e->getMessage() . '</error>');
         }
     }
-
 }
