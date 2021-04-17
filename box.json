@@ -19,5 +19,5 @@
     }
   ],
   "git-version": "package_version",
-  "key": "phar-private-nopassphrase.pem"
+  "key": "phar.pem"
 }

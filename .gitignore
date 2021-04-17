@@ -11,7 +11,7 @@ composer.phar
 /.env
 /bin/
 /phar-private.pem.passphrase-protected
-/phar-private.pem
+/phar.pem
 /phar-private-nopassphrase.pem
 /elasticorn.phar.pubkey
 /elasticorn.phar

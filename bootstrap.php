@@ -9,13 +9,12 @@ declare(strict_types=1);
  */
 
 use Dotenv\Dotenv;
+use SelfUpdate\SelfUpdateCommand;
 use T3G\Elasticorn\Commands\Index\CornifyCommand;
 use T3G\Elasticorn\Commands\Index\InitCommand;
 use T3G\Elasticorn\Commands\Index\RemapCommand;
 use T3G\Elasticorn\Commands\Mapping\CompareCommand;
 use T3G\Elasticorn\Commands\Mapping\ShowCommand;
-use T3G\Elasticorn\Commands\Self\RollbackCommand;
-use T3G\Elasticorn\Commands\Self\UpdateCommand;
 use T3G\Elasticorn\Commands\Type\TruncateCommand;
 
 // env config
@@ -53,8 +52,7 @@ $application->add(new CornifyCommand());
 $application->add(new TruncateCommand());
 
 if (true === $phar) {
-    $application->add(new UpdateCommand());
-    $application->add(new RollbackCommand());
+    $application->add(new SelfUpdateCommand('Elasticorn', '7.0.0', 'TYPO3GmbH/elasticorn'));
 }
 
 $application->setName(

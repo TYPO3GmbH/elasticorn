@@ -14,14 +14,14 @@
     }
   ],
   "require": {
-    "php": "^7.2 || ^7.3 || ^7.4",
+    "php": "^7.4 || ^8.0",
     "ruflin/elastica": "^7.1",
-    "symfony/yaml": "^3.1",
-    "symfony/console": "^3.1",
-    "symfony/dependency-injection": "^3.1",
+    "symfony/yaml": "^5.0",
+    "symfony/console": "^5.0",
+    "symfony/dependency-injection": "^5.0",
     "sebastian/diff": "^4.0",
     "vlucas/phpdotenv": "^2.3",
-    "padraic/phar-updater": "^1.0"
+    "consolidation/self-update": "^1.2"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master",
