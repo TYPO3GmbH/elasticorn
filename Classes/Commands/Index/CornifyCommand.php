@@ -41,10 +41,9 @@ class CornifyCommand extends BaseCommand
     /**
      * @param InputInterface  $input
      * @param OutputInterface $output
-     *
-     * @return int|void|null
+     * @return int
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $indexName = $input->getArgument('indexName');
@@ -64,6 +63,7 @@ class CornifyCommand extends BaseCommand
             $this->indexService->initIndex($indexName);
             $this->indexService->copyData($indexName . $suffix, $indexName);
         }
+        return 0;
     }
 
     /**

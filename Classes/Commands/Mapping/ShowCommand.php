@@ -38,9 +38,9 @@ class ShowCommand extends BaseCommand
      * @param InputInterface  $input
      * @param OutputInterface $output
      *
-     * @return void
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         parent::execute($input, $output);
         $mapping = $this->indexService->getMappingForIndex();
@@ -48,5 +48,6 @@ class ShowCommand extends BaseCommand
         $output->write(
             $dump
         );
+        return 0;
     }
 }
