@@ -4,6 +4,11 @@ CHANGELOG
 Features and Bugfixes per version
 ---------------------------------
 
+### 7.0.0
+
+- Compatibility with Elasticsearch 7.x
+- [!!!] Removed document types - take care of adjusting your config, elasticsearch now requests one index per type
+
 ### 5.3.1
 - Make ES connection in behat tests configurable via env variables
 - Update README, fix test instructions

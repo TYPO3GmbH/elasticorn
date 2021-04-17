@@ -81,6 +81,7 @@ class IndexService
     {
         $newIndex = $this->client->getIndex($newName);
         $newIndex->create();
+        $this->logger->debug('Renaming index for reindexing of data: ' . $newName);
         $reindex = new Reindex($this->index, $newIndex);
         $reindex->run();
         $this->index->delete();
@@ -220,8 +221,8 @@ class IndexService
             $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
         } else {
             $configuration = $this->configurationService->getIndexConfigurations();
-            $this->createPrimaryIndex($indexName, $configuration, $language);
-            $this->createSecondaryIndex($indexName, $configuration, $language);
+            $this->createPrimaryIndex($indexName, $configuration[$indexName], $language);
+            $this->createSecondaryIndex($indexName, $configuration[$indexName], $language);
         }
     }
 

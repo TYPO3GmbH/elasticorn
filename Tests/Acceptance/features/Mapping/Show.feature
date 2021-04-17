@@ -8,27 +8,10 @@ Feature: Show mapping
     When I call elasticorn "mapping:show footest"
     Then I should see:
   """
-  tweets:
-      properties:
-          name:
-              type: text
-              analyzer: english
-  users:
-      properties:
-          avatar:
-              type: text
-              analyzer: english
-          email:
-              type: keyword
-              store: true
-          fullname:
-              type: keyword
-              store: true
-          id:
-              type: integer
-          username:
-              type: keyword
-              store: true
+  properties:
+      name:
+          type: text
+          analyzer: english
   """
 
   Scenario: Get help if argument indexName is missing

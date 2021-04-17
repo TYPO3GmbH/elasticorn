@@ -60,12 +60,14 @@ class ConfigurationService
      */
     public function applyMapping(string $indexName, Index $index, string $language = '')
     {
-        $documentTypeConfigurations = $this->configurationParser->getDocumentTypeConfigurations($indexName, $language);
+        $mappingConfiguration = $this->configurationParser->getMapping($indexName, $language);
         $this->logger->debug('Loading mapping for ' . $indexName);
-        foreach ($documentTypeConfigurations as $documentType => $configuration) {
-            $mapping = new Mapping($configuration);
+        if (count($mappingConfiguration) > 0) {
+            $mapping = new Mapping($mappingConfiguration);
             $mapping->send($index);
-            $this->logger->debug('Applying mapping for ' . $documentType);
+            $this->logger->debug('Applying mapping for ' . $indexName);
+        } else {
+            $this->logger->debug('No mapping available for ' . $indexName);
         }
     }
 
@@ -84,12 +86,9 @@ class ConfigurationService
         }
         $mapping = $index->getMapping();
         $this->logger->debug('Get mapping configuration for ' . $indexName);
-        $documentTypeConfigurations =
-            $this->configurationParser->convertDocumentTypeConfigurationToMappingFromElastica(
-                $this->configurationParser->getDocumentTypeConfigurations($indexName)
-            );
+        $mappingConfiguration['properties'] = $this->configurationParser->getMapping($indexName);
 
-        return $this->compareConfigurations($mapping, $documentTypeConfigurations);
+        return $this->compareConfigurations($mapping, $mappingConfiguration);
     }
 
     /**
@@ -152,23 +151,19 @@ class ConfigurationService
     {
         $result = '';
         $differ = new DiffUtility();
-        foreach ($configuration2 as $documentType => $configuration) {
-            if (array_key_exists($documentType, $configuration1)) {
-                $documentTypeMapping = $configuration1[$documentType]['properties'];
-                $configuration = $configuration['properties'];
-                ksort($documentTypeMapping);
-                ksort($configuration);
-                if ($documentTypeMapping === $configuration) {
-                    $this->logger->info(
-                        'No difference between configurations of document type "' . $documentType . '"'
-                    );
-                } else {
-                    $diff = "Document Type \"$documentType\": \n" .
-                            $differ->diff($documentTypeMapping, $configuration);
-                    $this->logger->info($diff);
-                    $result .= $diff;
-                }
-            }
+        $configuration1Props = $configuration1['properties'] ?? [];
+        $configuration2Props = $configuration2['properties'] ?? [];
+        ksort($configuration1Props);
+        ksort($configuration2Props);
+        if ($configuration1Props === $configuration2Props) {
+            $this->logger->info(
+                'No difference between configurations'
+            );
+        } else {
+            $diff = "Diff: \n" .
+                    $differ->diff($configuration1Props, $configuration2Props);
+            $this->logger->info($diff);
+            $result .= $diff;
         }
 
         return $result;

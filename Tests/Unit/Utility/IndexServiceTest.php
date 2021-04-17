@@ -89,7 +89,7 @@ class IndexServiceTest extends TestCase
         );
         $this->configServiceProphecy->applyMapping('testindex', Argument::any(), Argument::any())->willReturn();
         $this->clientProphecy->getIndex(Argument::any())->willReturn($indexProphecy->reveal());
-        $this->configParserProphecy->getDocumentTypeConfigurations(Argument::any())->willReturn([]);
+        $this->configParserProphecy->getMapping(Argument::any())->willReturn([]);
         $indexProphecy->exists()->willReturn(false);
         $indexProphecy->create(Argument::any())->willReturn(new Response(''));
         $indexProphecy->addAlias(Argument::any())->willReturn(new Response(''));

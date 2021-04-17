@@ -11,11 +11,8 @@ declare(strict_types=1);
 use Behat\Behat\Context\Context;
 use Elastica\Client;
 use Elastica\Connection;
-use Elastica\Document;
 use Elastica\Index;
 use Elastica\Mapping;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertSame;
 use function PHPUnit\Framework\assertStringContainsString;
 use function PHPUnit\Framework\assertTrue;
 
@@ -48,33 +45,6 @@ class FeatureContext implements Context
     {
         $this->deleteAllIndices();
         putenv('configurationPath=Tests/Fixtures/Configuration');
-    }
-
-    /**
-     * @Given /^I add some documents of type "([^"]*)"$/
-     */
-    public function iAddSomeDocumentsOfType(string $typeName)
-    {
-        $client = $this->getElasticaClient();
-        $id = '1';
-        $tweet = [
-            'id' => $id,
-            'user' => [
-                'name' => 'mewantcookie',
-                'fullName' => 'Cookie Monster',
-            ],
-            'msg' => 'Me wish there were expression for cookies like there is for apples. "A cookie a day make the doctor diagnose you with diabetes" not catchy.',
-            'tstamp' => '1238081389',
-            'location' => '41.12,-71.34',
-        ];
-        $tweetDocument = new Document($id, $tweet);
-        $tweet2 = $tweet;
-        $tweet2['id'] = 2;
-        $tweetDocument2 = new Document('2', $tweet2);
-        $index = $client->getIndex('footest');
-        $index->addDocument($tweetDocument);
-        $index->addDocument($tweetDocument2);
-        $index->refresh();
     }
 
     /**
@@ -150,14 +120,11 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then /^I should have document types configuration files for "([^"]*)"$/
+     * @Then /^I should have a mapping file for "([^"]*)"$/
      */
-    public function iShouldHaveDocumentTypesConfigurationFilesFor($indexName)
+    public function iShouldHaveMappingConfigurationFor($indexName)
     {
-        $expected = scandir(getenv('configurationPath') . '/' . $this->defaultTestSourceIndex . '/DocumentTypes/', 0);
-        $actual = scandir(getenv('configurationPath') . '/' . $indexName . '/DocumentTypes/', 0);
-
-        assertSame($expected, $actual);
+        assertTrue(file_exists(getenv('configurationPath') . '/' . $indexName . '/Mapping.yaml'));
 
         $this->filesToDelete[] = getenv('configurationPath') . '/' . $indexName;
     }
@@ -180,7 +147,7 @@ class FeatureContext implements Context
      */
     public function iShouldSee($expected)
     {
-        assertEquals((string) $expected, $this->output);
+        assertStringContainsString((string) $expected, $this->output);
     }
 
     /**
@@ -201,7 +168,7 @@ class FeatureContext implements Context
 
     public function __destruct()
     {
-        $this->deleteAllIndices();
+        //$this->deleteAllIndices();
         foreach ($this->filesToDelete as $file) {
             $this->rrmdir($file);
         }
@@ -213,15 +180,6 @@ class FeatureContext implements Context
     public function iUseAlternativeConfigurationFolderWithChangesAndLanguages()
     {
         putenv('configurationPath=Tests/Fixtures/AlternativeConfigurationWithLanguages');
-    }
-
-    /**
-     * @Then /^There should be no documents of type "([^"]*)"$/
-     */
-    public function thereShouldBeNoDocumentsOfType(string $typeName)
-    {
-        $docCount = $this->getElasticaClient()->getIndex('footest')->count();
-        assertSame(0, $docCount);
     }
 
     private function getElasticaClient()

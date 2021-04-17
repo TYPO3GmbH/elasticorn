@@ -14,4 +14,4 @@ Feature: Cornify an index
     Given I have a non-elasticorn index "mysuperindex"
     And I have setup mappings and data for index "mysuperindex"
     When I call elasticorn "index:cornify mysuperindex"
-    Then I should have document types configuration files for "mysuperindex"
+    Then I should have a mapping file for "mysuperindex"

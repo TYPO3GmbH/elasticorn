@@ -76,9 +76,8 @@ For elasticorn to work, your configuration needs to be structured in the followi
 - MAIN configuration directory
   - Elasticorn.yaml*
   - IndexName directory
-    - IndexConfiguration.yaml
-    - DocumentTypes directory
-      - documenttype.yaml (for example: tweets.yaml)
+    - IndexConfiguration.yaml (Containing index settings)
+    - Mapping.yaml (Containing mapping configuration)
 ~~~
 \* optional
 
@@ -88,12 +87,15 @@ For elasticorn to work, your configuration needs to be structured in the followi
 project
 │   README.md    
 └───Elasticorn
-	└── t3_forger
-    		├── DocumentTypes
-    		│   ├── issue.yaml
-    		│   ├── review.yaml
-    		│   └── user.yaml
+	└── t3_forger_issue
+    		├── Mapping.yaml
     		└── IndexConfiguration.yaml
+	└── t3_forger_review
+    		├── Mapping.yaml
+    		└── IndexConfiguration.yaml
+    └── t3_forger_user
+        ├── Mapping.yaml
+        └── IndexConfiguration.yaml
 ~~~
 
 In our case the `Elasticorn` holds all information about our indices. Multiple indices can be managed by
@@ -101,13 +103,11 @@ creating new folders.
 
 The `IndexConfiguration.yaml` file specifies configuration parameters for the index (for example shards or replicas.)
 
-The folder called `DocumentTypes` holds our type mapping with a file per document type.
+The file called `Mapping.yaml` holds our type mapping.
 
 The syntax is pretty straightforward yaml syntax which will then be parsed as an array.
 
-The filename will determine the name of your document type in Elasticsearch.
-
-We'll take a look at `user.yaml` here:
+We'll take a look at `Mapping.yaml` here:
 
 ~~~
 id:
@@ -131,7 +131,7 @@ avatar:
 For an example on how the configuration should look like, see the Tests/Fixtures/Configuration folder in this project.
 For a list of available configuration options see the elastica documentation.
 
-You can use a .env file, a command line parameter or the interactive console to specify your configuration directory.
+You can use a `.env` file, a command line parameter or the interactive console to specify your configuration directory.
 
 ### .env configuration
 
