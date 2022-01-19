@@ -178,6 +178,10 @@ class IndexService
             foreach ($languages as $language) {
                 $this->remapIndex($indexName, $language);
             }
+            $this->logger->debug(
+                'Adding alias to ' . $indexName . '_' . $languages[0] . ' from ' . $indexName
+            );
+            $this->client->getIndex($indexName . '_' . $languages[0])->addAlias($indexName);
         } else {
             $this->remapIndex($indexName);
         }
