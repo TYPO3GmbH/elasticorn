@@ -178,10 +178,6 @@ class IndexService
             foreach ($languages as $language) {
                 $this->remapIndex($indexName, $language);
             }
-            $this->logger->debug(
-                'Adding alias to ' . $indexName . '_' . $languages[0] . ' from ' . $indexName
-            );
-            $this->client->getIndex($indexName . '_' . $languages[0])->addAlias($indexName);
         } else {
             $this->remapIndex($indexName);
         }
@@ -219,6 +215,11 @@ class IndexService
             $reindex = new Reindex($activeIndex, $inactiveIndex);
             $reindex->run();
             $this->switchAlias($aliasName, $activeIndex, $inactiveIndex);
+            // Alias for mapping configuration
+            if ($activeIndex->hasAlias($indexName)) {
+                $activeIndex->removeAlias($indexName);
+                $inactiveIndex->addAlias($indexName);
+            }
         } else {
             $configuration = $this->configurationService->getIndexConfigurations();
             $this->createPrimaryIndex($indexName, $configuration[$indexName], $language);
