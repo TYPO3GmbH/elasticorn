@@ -5,8 +5,6 @@ Elasticorn - PHP based elasticsearch manager
 [![build Status](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/TYPO3GmbH/elasticorn/build-status/develop)
 
 Elasticorn is an elasticsearch manager based on elastica. It's main feature is zero-down-time remapping of data.
-Find the project homepage at https://elasticorn.net/.
-
 Compatibility
 --------------
 
@@ -52,12 +50,6 @@ Composer based:
 composer require t3g/elasticorn
 ~~~
 
-Download as .phar:
-
-* http://elasticorn.net/elasticorn.phar && http://elasticorn.net/elasticorn.phar.pubkey
-
-Download the phar and the phar.pubkey file to a folder of your choice. If you want to be able to run elasticorn from anywhere
-make sure your folder is in your PATH. As the phar is signed the pubkey file should simply be in the same folder as the phar.
 
 Elasticsearch Client Configuration
 ----------------------------------
